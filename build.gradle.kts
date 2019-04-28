@@ -29,24 +29,10 @@ kotlin {
 }
 
 kotlinFrontend {
-    npm {
-        dependency("pako")
-        dependency("text-encoding")
-    }
 
     sourceMaps = true
+    downloadNodeJsVersion = "latest"
 
-    bundlesDirectory = file("web")
-
-    bundle("webpack") {
-
-    }
-
-}
-
-ktor {
-    port = 8080
-    mainClass = "io.ktor.server.jetty.EngineMain"
 }
 
 tasks.create<Jar>("sourcesJar"){
