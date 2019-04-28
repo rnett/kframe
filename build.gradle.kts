@@ -1,6 +1,6 @@
 plugins {
     id("kotlin2js") version "1.3.31"
-    id("org.jetbrains.kotlin.frontend") version "0.0.45"
+    //id("org.jetbrains.kotlin.frontend") version "0.0.45"
     `maven-publish`
 }
 
@@ -28,14 +28,12 @@ kotlin {
     }
 }
 
-kotlinFrontend {
+//kotlinFrontend {
+//    sourceMaps = true
+//    downloadNodeJsVersion = "latest"
+//}
 
-    sourceMaps = true
-    downloadNodeJsVersion = "latest"
-
-}
-
-tasks.create<Jar>("sourcesJar"){
+val sourcesJar = tasks.create<Jar>("sourcesJar") {
     classifier = "sources"
     from(sourceSets["main"].allSource)
 }
@@ -47,8 +45,8 @@ publishing {
             group = "com.rnett.kframe"
             artifactId = "kframe"
             version = "1.0.0"
-            
-            artifact("sourcesJar")
+
+            artifact(sourcesJar)
         }
     }
 }
