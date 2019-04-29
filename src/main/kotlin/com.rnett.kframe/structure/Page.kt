@@ -1,10 +1,8 @@
 package com.rnett.kframe.structure
 
-import com.rnett.kframe.dom.title
 import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLHeadElement
 import org.w3c.dom.asList
-import kotlin.browser.document
 
 data class Parameters(val params: Map<String, String>): Map<String, String> by params
 
@@ -41,19 +39,19 @@ class Page (val name: String, val url: String, val getTitle: (Parameters) -> Str
 }
 
 class Body internal constructor() :
-    W3ElementWrapper<HTMLBodyElement>(
+    W3ElementWrapper<Body, HTMLBodyElement>(
         (kotlin.browser.document.getElementsByTagName("body").asList().firstOrNull()
             ?: kotlin.browser.document.createElement("body")) as HTMLBodyElement
     ),
-    DisplayHost {
+    IDisplayHost<Body> {
     operator fun invoke(builder: Body.() -> Unit) = apply(builder)
 }
 
 class Head internal constructor() :
-    W3ElementWrapper<HTMLHeadElement>(
+    W3ElementWrapper<Head, HTMLHeadElement>(
         (kotlin.browser.document.getElementsByTagName("head").asList().firstOrNull()
             ?: kotlin.browser.document.createElement("head")) as HTMLHeadElement
     ),
-    MetaHost {
+    IMetaHost<Head> {
     operator fun invoke(builder: Head.() -> Unit) = apply(builder)
 }

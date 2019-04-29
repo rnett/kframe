@@ -1,5 +1,6 @@
 package com.rnett.kframe.structure
 
+import com.rnett.kframe.structure.data.Binding
 import kotlin.browser.window
 
 internal data class SubpageInstance(val page: Page, val data: Parameters) {
@@ -57,6 +58,7 @@ object Document {
 
     fun postEventUpdate() {
         postEventSubscribers.forEach { it() }
+        bindings.forEach { it.refresh() }
     }
 
     fun goto(page: String, data: Parameters): Boolean {
@@ -102,8 +104,10 @@ object Document {
         addPage(Page(name, url, title, builder))
     }
 
-    fun <S : ElementHost, E : AnyElement> watchView(view: View<S, E>, element: E) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private val bindings = mutableListOf<Binding<*, *>>()
+
+    fun addBinding(binding: Binding<*, *>) {
+        bindings.add(binding)
     }
 }
 

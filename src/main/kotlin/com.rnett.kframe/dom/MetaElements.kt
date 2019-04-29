@@ -27,13 +27,13 @@ fun MetaHost.title(title: String = "", klass: String = "", id: String = "", buil
     +TitleElement(title)(klass, id)(builder)
 
 @KframeDSL
-fun ElementHost.script(
+fun ElementHost<*>.script(
     klass: String = "", id: String = "",
     builder: BasicMetaBuilder<HTMLScriptElement> = {}
 ) = +BasicMetaElement<HTMLScriptElement>("script")(klass, id)(builder)
 
 @KframeDSL
-fun ElementHost.script(
+fun ElementHost<*>.script(
     src: String,
     klass: String = "", id: String = "",
     builder: BasicMetaBuilder<HTMLScriptElement> = {}
@@ -43,7 +43,7 @@ fun ElementHost.script(
 }
 
 @KframeDSL
-fun ElementHost.script(
+fun ElementHost<*>.script(
     src: String,
     integrity: String,
     crossorigin: String = "anonymous",

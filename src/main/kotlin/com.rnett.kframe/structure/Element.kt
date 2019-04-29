@@ -1,29 +1,120 @@
 package com.rnett.kframe.structure
 
+import com.rnett.kframe.structure.data.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Text
 import org.w3c.dom.events.Event
+import kotlin.reflect.KProperty0
 
 @DslMarker
 annotation class KframeDSL
 
-interface ElementHost {
+interface ElementHost<S : ElementHost<S>> {
     fun addChild(child: Element<*, *>)
     fun addText(text: String): TextElement
 
-    operator fun <T : AnyElement> T.unaryPlus(): T{
+    operator fun <T : AnyElement> T.unaryPlus(): T {
         addChild(this)
         return this
     }
+
     operator fun String.unaryPlus() = addText(this)
 
     val children: List<Element<*, *>>
+
+
+    @BindingDSL
+    fun <B : Binding<T, E>, T, E : AnyElement> bind(binding: B, watch: Boolean = true): B {
+        if (watch)
+            Document.addBinding(binding)
+
+        return binding
+    }
+
+    @BindingDSL
+    fun <V : View<S, E>, E : AnyElement> V.bind(
+        watch: Boolean = true,
+        equalityCheck: EqualityCheck<*> = EqualityCheck.HashCode
+    ): ViewBinding<V, E, S> {
+        val binding = ViewBinding(this@ElementHost as S, this, equalityCheck)
+        return bind(binding, watch)
+    }
+
+    @BindingDSL
+    fun <V : View<S, E>, E : AnyElement> KProperty0<V>.bind(
+        watch: Boolean = true,
+        equalityCheck: EqualityCheck<*> = EqualityCheck.Equality
+    ): ViewPropertyBinding<V, E, S> {
+        val binding = ViewPropertyBinding(this@ElementHost as S, this, equalityCheck)
+        return bind(binding)
+    }
+
+    @BindingDSL
+    operator fun <V : View<S, E>, E : AnyElement> V.unaryPlus() = bind(true)
+
+    @BindingDSL
+    operator fun <V : View<S, E>, E : AnyElement> V.unaryMinus() = bind(false)
+
+    @BindingDSL
+    operator fun <V : View<S, E>, E : AnyElement> KProperty0<V>.unaryPlus() = bind(true)
+
+    @BindingDSL
+    operator fun <V : View<S, E>, E : AnyElement> KProperty0<V>.unaryMinus() = bind(false)
+
+    @BindingDSL
+    fun <T, E : AnyElement> BindingCondition<T>.bind(watch: Boolean = true, builder: S.(T) -> E): Binding<T, E> {
+        val binding = Binding({ (this@ElementHost as S).builder(it) }, this)
+        return bind(binding)
+    }
+
+    @BindingDSL
+    infix fun <T, E : AnyElement> BindingCondition<T>.bind(builder: S.(T) -> E): Binding<T, E> {
+        return this.bind(true, builder)
+    }
+
+    @BindingDSL
+    fun <T, E : AnyElement> KProperty0<T>.bind(
+        watch: Boolean = true,
+        equalityCheck: EqualityCheck<*> = EqualityCheck.Equality,
+        builder: S.(T) -> E
+    ): Binding<T, E> {
+        return PropertyBindingCondition(this, equalityCheck).bind(watch, builder)
+    }
+
+    @BindingDSL
+    infix fun <T, E : AnyElement> KProperty0<T>.bind(
+        builder: S.(T) -> E
+    ): Binding<T, E> {
+        return this.bind(true, builder = builder)
+    }
+
+    @BindingDSL
+    fun <T, E : AnyElement> T.bind(
+        watch: Boolean = true,
+        equalityCheck: EqualityCheck<*> = EqualityCheck.HashCode,
+        builder: S.(T) -> E
+    ): Binding<T, E> {
+        return ValueBindingCondition(this, equalityCheck).bind(watch, builder)
+    }
+
+    @BindingDSL
+    infix fun <T, E : AnyElement> T.bind(
+        builder: S.(T) -> E
+    ): Binding<T, E> {
+        return this.bind(true, builder = builder)
+    }
 }
 
-interface DisplayHost: ElementHost
-interface MetaHost: ElementHost
+typealias AnyElementHost = ElementHost<*>
 
-open class W3ElementWrapper<U : org.w3c.dom.Element>(val underlying: U) : ElementHost {
+interface IDisplayHost<S : IDisplayHost<S>> : ElementHost<S>
+interface IMetaHost<S : IMetaHost<S>> : ElementHost<S>
+
+typealias DisplayHost = IDisplayHost<*>
+typealias MetaHost = IMetaHost<*>
+
+open class W3ElementWrapper<S : W3ElementWrapper<S, U>, U : org.w3c.dom.Element>(val underlying: U) :
+    ElementHost<S> {
 
     override fun addChild(child: Element<*, *>) {
         underlying.append(child.underlying)
@@ -45,7 +136,8 @@ open class W3ElementWrapper<U : org.w3c.dom.Element>(val underlying: U) : Elemen
 typealias Builder<E> = E.() -> Unit
 
 typealias AnyElement = Element<*, *>
-abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : ElementHost {
+
+abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : ElementHost<S> {
 
     val underlying: U = kotlin.browser.document.createElement(tag) as U
 
@@ -69,10 +161,10 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
         child.onAdded(this)
     }
 
-    private var _parent: ElementHost? = null
+    private var _parent: ElementHost<*>? = null
     val parent get() = _parent
 
-    fun onAdded(parent: ElementHost) {
+    fun onAdded(parent: ElementHost<*>) {
         this._parent = parent
     }
 
@@ -81,7 +173,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
     }
 
     @KframeDSL
-    operator fun invoke(builder: Builder<in S>): S{
+    operator fun invoke(builder: Builder<in S>): S {
         builder(this as S)
         return this
     }
@@ -120,6 +212,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
 
     @KframeDSL
     inline fun String.on(useCapture: Boolean = false, noinline handler: (Event) -> Unit) = on(this, useCapture, handler)
+
     @KframeDSL
     inline operator fun String.invoke(useCapture: Boolean = false, noinline handler: (Event) -> Unit) =
         on(this, useCapture, handler)
@@ -136,19 +229,12 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
         return this
     }
 
-
-    operator fun <E : AnyElement> View<S, E>.unaryPlus(): E {
-        val element = (this as S).build()
-        if (this.watch)
-            Document.watchView(this, element)
-
-        return element
-    }
-
 }
 
-abstract class DisplayElement<U: HTMLElement, S: DisplayElement<U, S>>(tag: String) : Element<U, S>(tag), DisplayHost
-abstract class MetaElement<U: HTMLElement, S: MetaElement<U, S>>(tag: String) : Element<U, S>(tag), MetaHost
+abstract class DisplayElement<U : HTMLElement, S : DisplayElement<U, S>>(tag: String) : Element<U, S>(tag),
+    IDisplayHost<S>
+
+abstract class MetaElement<U : HTMLElement, S : MetaElement<U, S>>(tag: String) : Element<U, S>(tag), IMetaHost<S>
 
 class TextElement(private var _underlying: Text) {
     var value: String
@@ -162,7 +248,7 @@ class TextElement(private var _underlying: Text) {
     val underlying get() = _underlying
 }
 
-class BasicDisplayElement<U: HTMLElement>(tag: String) : DisplayElement<U, BasicDisplayElement<U>>(tag)
+class BasicDisplayElement<U : HTMLElement>(tag: String) : DisplayElement<U, BasicDisplayElement<U>>(tag)
 class BasicMetaElement<U : HTMLElement>(tag: String) : DisplayElement<U, BasicMetaElement<U>>(tag)
 
 typealias BasicDisplayBuilder<U> = BasicDisplayElement<U>.() -> Unit
