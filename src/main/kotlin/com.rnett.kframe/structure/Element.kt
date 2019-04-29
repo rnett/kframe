@@ -3,7 +3,6 @@ package com.rnett.kframe.structure
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Text
 import org.w3c.dom.events.Event
-import kotlin.browser.document
 
 @DslMarker
 annotation class KframeDSL
@@ -17,14 +16,19 @@ interface ElementHost {
         return this
     }
     operator fun String.unaryPlus() = addText(this)
+
+    val children: List<Element<*, *>>
 }
 
 interface DisplayHost: ElementHost
 interface MetaHost: ElementHost
 
 open class W3ElementWrapper<U : org.w3c.dom.Element>(val underlying: U) : ElementHost {
+
     override fun addChild(child: Element<*, *>) {
         underlying.append(child.underlying)
+        _children.add(child)
+        child.onAdded(this)
     }
 
     override fun addText(text: String): TextElement {
@@ -32,6 +36,10 @@ open class W3ElementWrapper<U : org.w3c.dom.Element>(val underlying: U) : Elemen
         underlying.appendChild(t)
         return TextElement(t)
     }
+
+    private val _children = mutableListOf<AnyElement>()
+
+    override val children: List<AnyElement> = _children
 }
 
 typealias Builder<E> = E.() -> Unit
@@ -44,20 +52,32 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
     val attributes = Attributes(mutableMapOf(), this)
     val style = attributes.style
 
-    val id by attributes.boxedValue<String>()
+    var id by attributes.boxedValue<String>()
     val classes get() = attributes.classes
     var klass
         get() = attributes.classes.raw
         set(v) {
             classes.clear()
-            classes.add(v)
+            classes.addAll(v.split(" "))
         }
 
     val _children = mutableListOf<Element<*, *>>()
-    val children: List<Element<*, *>> = _children
+    override val children: List<Element<*, *>> = _children
 
     override fun addChild(child: Element<*, *>) {
         _children.add(child)
+        child.onAdded(this)
+    }
+
+    private var _parent: ElementHost? = null
+    val parent get() = _parent
+
+    fun onAdded(parent: ElementHost) {
+        this._parent = parent
+    }
+
+    fun remove() {
+        underlying.remove()
     }
 
     @KframeDSL
@@ -103,6 +123,28 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
     @KframeDSL
     inline operator fun String.invoke(useCapture: Boolean = false, noinline handler: (Event) -> Unit) =
         on(this, useCapture, handler)
+
+    operator fun invoke(klass: String = "", id: String = "", builder: Builder<in S> = {}): S {
+        if (klass.isNotBlank())
+            this.klass = klass
+
+        if (id.isNotBlank())
+            this.id = id
+
+        builder(this as S)
+
+        return this
+    }
+
+
+    operator fun <E : AnyElement> View<S, E>.unaryPlus(): E {
+        val element = (this as S).build()
+        if (this.watch)
+            Document.watchView(this, element)
+
+        return element
+    }
+
 }
 
 abstract class DisplayElement<U: HTMLElement, S: DisplayElement<U, S>>(tag: String) : Element<U, S>(tag), DisplayHost
@@ -121,7 +163,7 @@ class TextElement(private var _underlying: Text) {
 }
 
 class BasicDisplayElement<U: HTMLElement>(tag: String) : DisplayElement<U, BasicDisplayElement<U>>(tag)
-class BasicMetaElement<U: HTMLElement>(tag: String) : DisplayElement<U, BasicDisplayElement<U>>(tag)
+class BasicMetaElement<U : HTMLElement>(tag: String) : DisplayElement<U, BasicMetaElement<U>>(tag)
 
 typealias BasicDisplayBuilder<U> = BasicDisplayElement<U>.() -> Unit
 typealias BasicMetaBuilder<U> = BasicMetaElement<U>.() -> Unit

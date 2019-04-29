@@ -9,10 +9,16 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    jcenter()
+    maven("https://jitpack.io")
+    maven("https://dl.bintray.com/soywiz/soywiz")
+    maven("https://kotlin.bintray.com/kotlinx")
 }
 
 dependencies {
     implementation(kotlin("stdlib-js"))
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.0")
 }
 
 kotlin {

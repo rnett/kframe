@@ -11,6 +11,7 @@ internal data class SubpageInstance(val page: Page, val data: Parameters) {
                 ""
 }
 
+@JsName("KframeDocument")
 object Document {
     var _url: String = ""
     var _parameters: Parameters = Parameters(mapOf())
@@ -30,7 +31,7 @@ object Document {
             throw IllegalArgumentException("Page with url ${page.url} already registered")
 
         if(page.name in pagesByName)
-            throw IllegalArgumentException("Page with name ${page.name} already registered")
+            throw IllegalArgumentException("Page with baseName ${page.name} already registered")
 
         pagesByUrl[page.url] = page
         pagesByName[page.name] = page
@@ -38,12 +39,24 @@ object Document {
 
     private var currentPage: SubpageInstance? = null
 
+    private val preEventSubscribers = mutableSetOf<() -> Unit>()
+    private val postEventSubscribers = mutableSetOf<() -> Unit>()
+
+    fun subscribePreEvent(body: () -> Unit) = preEventSubscribers.add(body)
+    fun subscribePostEvent(body: () -> Unit) = postEventSubscribers.add(body)
+
+    fun beforeEvent(body: () -> Unit) = subscribePreEvent(body)
+    fun afterEvent(body: () -> Unit) = subscribePostEvent(body)
+
+    fun unsubscribePreEvent(body: () -> Unit) = preEventSubscribers.remove(body)
+    fun unsubscribePostEvent(body: () -> Unit) = postEventSubscribers.remove(body)
+
     fun preEventUpdate() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        preEventSubscribers.forEach { it() }
     }
 
     fun postEventUpdate() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        postEventSubscribers.forEach { it() }
     }
 
     fun goto(page: String, data: Parameters): Boolean {
@@ -80,14 +93,18 @@ object Document {
         goto(page, data)
         return true
     }
-}
 
-fun Document.page(name: String, url: String, title: String, builder: Page.(Parameters) -> Unit){
-    Document.addPage(Page(name, url, {title}, builder))
-}
+    fun page(name: String, url: String, title: String, builder: Page.(Parameters) -> Unit) {
+        addPage(Page(name, url, { title }, builder))
+    }
 
-fun Document.page(name: String, url: String, title: (Parameters) -> String, builder: Page.(Parameters) -> Unit){
-    Document.addPage(Page(name, url, title, builder))
+    fun page(name: String, url: String, title: (Parameters) -> String, builder: Page.(Parameters) -> Unit) {
+        addPage(Page(name, url, title, builder))
+    }
+
+    fun <S : ElementHost, E : AnyElement> watchView(view: View<S, E>, element: E) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
 
 fun site(builder: Document.() -> Unit){
@@ -99,6 +116,8 @@ fun site(builder: Document.() -> Unit){
        url = window.location.protocol + "//" + window.location.hostname + window.location.href.substringAfter("?routerurl=")
     }
 
-    Document.gotoUrl(url)
+    if (!Document.gotoUrl(url)) {
+        Document.gotoUrl("")
+    }
 }
 

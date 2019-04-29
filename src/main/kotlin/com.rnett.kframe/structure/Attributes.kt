@@ -27,6 +27,9 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
 
     }
 
+    operator fun set(key: String, value: String) = set(key, Value.Box(value))
+    operator fun set(key: String, value: Int) = set(key, Value.Box(value))
+
     fun <T : Value> getValue(key: String) =
         this[key] as? T
 
@@ -75,6 +78,8 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
         classes = Classes()
         this["class"] = classes
     }
+
+    operator fun invoke(builder: Attributes.() -> Unit) = builder()
 }
 
 class Classes(val classes: MutableSet<String> = mutableSetOf()): MutableSet<String> by classes, Attributes.Value() {
