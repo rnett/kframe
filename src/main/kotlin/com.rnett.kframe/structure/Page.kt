@@ -1,5 +1,6 @@
 package com.rnett.kframe.structure
 
+import com.rnett.kframe.dom.title
 import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLHeadElement
 import org.w3c.dom.asList

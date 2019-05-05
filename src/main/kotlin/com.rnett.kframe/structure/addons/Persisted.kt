@@ -1,6 +1,9 @@
 package com.rnett.kframe.structure.addons
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.cbor.Cbor
+import kotlinx.serialization.dumps
+import kotlinx.serialization.loads
 import kotlin.browser.localStorage
 import kotlin.browser.sessionStorage
 import kotlin.collections.set
@@ -53,7 +56,7 @@ sealed class Storage(val underlying: JsStorage, val storageName: String) {
     operator fun <R : Any> get(key: String, serializer: KSerializer<R>): R {
         setKeySerializerOnly(key, serializer)
         return underlying.getItem(key)?.let {
-            CBOR.plain.loads(
+            Cbor.plain.loads(
                 serializer,
                 it
             )
@@ -81,7 +84,7 @@ sealed class Storage(val underlying: JsStorage, val storageName: String) {
     operator fun <R : Any> set(key: String, value: R, serializer: KSerializer<R>) {
         setKeySerializerOnly(key, serializer)
         underlying.setItem(
-            key, CBOR.plain.dumps(
+            key, Cbor.plain.dumps(
                 serializer,
                 value
             )

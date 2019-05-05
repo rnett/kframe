@@ -5,6 +5,8 @@ import org.w3c.dom.HTMLLinkElement
 import org.w3c.dom.HTMLMetaElement
 import org.w3c.dom.HTMLScriptElement
 import org.w3c.dom.HTMLTitleElement
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 class TitleElement() : MetaElement<HTMLTitleElement, TitleElement>("title") {
 
@@ -23,37 +25,54 @@ class TitleElement() : MetaElement<HTMLTitleElement, TitleElement>("title") {
 }
 
 @KframeDSL
-fun MetaHost.title(title: String = "", klass: String = "", id: String = "", builder: Builder<TitleElement> = {}) =
-    +TitleElement(title)(klass, id)(builder)
+inline fun MetaHost.title(
+    title: String = "",
+    klass: String = "",
+    id: String = "",
+    builder: Builder<TitleElement> = {}
+): TitleElement {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +TitleElement(title)(klass, id, builder)
+}
+
 
 @KframeDSL
-fun ElementHost<*>.script(
+inline fun ElementHost<*>.script(
     klass: String = "", id: String = "",
     builder: BasicMetaBuilder<HTMLScriptElement> = {}
-) = +BasicMetaElement<HTMLScriptElement>("script")(klass, id)(builder)
-
-@KframeDSL
-fun ElementHost<*>.script(
-    src: String,
-    klass: String = "", id: String = "",
-    builder: BasicMetaBuilder<HTMLScriptElement> = {}
-) = +BasicMetaElement<HTMLScriptElement>("script")(klass, id) {
-    attributes["src"] = src
-    builder()
+): BasicMetaElement<HTMLScriptElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicMetaElement<HTMLScriptElement>("script")(klass, id)(builder)
 }
 
 @KframeDSL
-fun ElementHost<*>.script(
+inline fun ElementHost<*>.script(
+    src: String,
+    klass: String = "", id: String = "",
+    builder: BasicMetaBuilder<HTMLScriptElement> = {}
+): BasicMetaElement<HTMLScriptElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicMetaElement<HTMLScriptElement>("script")(klass, id) {
+        attributes["src"] = src
+        builder()
+    }
+}
+
+@KframeDSL
+inline fun ElementHost<*>.script(
     src: String,
     integrity: String,
     crossorigin: String = "anonymous",
     klass: String = "", id: String = "",
     builder: BasicMetaBuilder<HTMLScriptElement> = {}
-) = +BasicMetaElement<HTMLScriptElement>("script")(klass, id) {
-    attributes["src"] = src
-    attributes["integrity"] = integrity
-    attributes["crossorigin"] = crossorigin
-    builder()
+): BasicMetaElement<HTMLScriptElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicMetaElement<HTMLScriptElement>("script")(klass, id) {
+        attributes["src"] = src
+        attributes["integrity"] = integrity
+        attributes["crossorigin"] = crossorigin
+        builder()
+    }
 }
 
 @KframeDSL
@@ -73,29 +92,35 @@ fun Body.bootstrapJs() {
 }
 
 @KframeDSL
-fun MetaHost.remoteStylesheet(
+inline fun MetaHost.remoteStylesheet(
     src: String,
     klass: String = "", id: String = "",
     builder: BasicMetaBuilder<HTMLLinkElement> = {}
-) = +BasicMetaElement<HTMLLinkElement>("link")(klass, id) {
-    attributes["href"] = src
-    attributes["rel"] = "stylesheet"
-    builder()
+): BasicMetaElement<HTMLLinkElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicMetaElement<HTMLLinkElement>("link")(klass, id) {
+        attributes["href"] = src
+        attributes["rel"] = "stylesheet"
+        builder()
+    }
 }
 
 @KframeDSL
-fun MetaHost.remoteStylesheet(
+inline fun MetaHost.remoteStylesheet(
     src: String,
     integrity: String,
     crossorigin: String = "anonymous",
     klass: String = "", id: String = "",
     builder: BasicMetaBuilder<HTMLLinkElement> = {}
-) = +BasicMetaElement<HTMLLinkElement>("link")(klass, id) {
-    attributes["href"] = src
-    attributes["rel"] = "stylesheet"
-    attributes["integrity"] = integrity
-    attributes["crossorigin"] = crossorigin
-    builder()
+): BasicMetaElement<HTMLLinkElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicMetaElement<HTMLLinkElement>("link")(klass, id) {
+        attributes["href"] = src
+        attributes["rel"] = "stylesheet"
+        attributes["integrity"] = integrity
+        attributes["crossorigin"] = crossorigin
+        builder()
+    }
 }
 
 @KframeDSL
@@ -108,12 +133,15 @@ fun Head.bootstrapCss() {
 }
 
 @KframeDSL
-fun MetaHost.viewport(
+inline fun MetaHost.viewport(
     content: String = "width=device-width, initial-scale=1, shrink-to-fit=no",
     klass: String = "", id: String = "",
     builder: BasicMetaBuilder<HTMLMetaElement> = {}
-) = +BasicMetaElement<HTMLMetaElement>("meta")(klass, id) {
-    attributes["content"] = content
-    attributes["name"] = "viewport"
-    builder()
+): BasicMetaElement<HTMLMetaElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicMetaElement<HTMLMetaElement>("meta")(klass, id) {
+        attributes["content"] = content
+        attributes["name"] = "viewport"
+        builder()
+    }
 }

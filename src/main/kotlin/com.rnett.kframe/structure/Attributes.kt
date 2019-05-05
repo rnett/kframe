@@ -14,6 +14,10 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
         }
     }
 
+    object Present : Value() {
+        override val raw = ""
+    }
+
     operator fun get(key: String) = attributes[key]
     operator fun set(key: String, value: Value?) {
         if(value == null) {
@@ -21,7 +25,11 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
             element.underlying.attributes.removeNamedItem(key)
         } else {
             attributes[key] = value
-            element.underlying.attributes[key]?.value = value.raw
+
+            if (value == Present)
+                element.underlying.attributes[key]?.value = key
+            else
+                element.underlying.attributes[key]?.value = value.raw
         }
 
 
@@ -75,13 +83,37 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
         style = Style(mutableMapOf(), element)
         this["style"] = style
 
-        classes = Classes()
+        classes = Classes(element = element)
         this["class"] = classes
     }
 
     operator fun invoke(builder: Attributes.() -> Unit) = builder()
 }
 
-class Classes(val classes: MutableSet<String> = mutableSetOf()): MutableSet<String> by classes, Attributes.Value() {
+class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Element<*, *>) :
+    MutableSet<String> by classes, Attributes.Value() {
     override val raw get() = classes.joinToString(" ")
+
+    override fun add(element: String) =
+        if (" " in element)
+            addAll(element.split(" "))
+        else {
+            if (classes.add(element)) {
+                this.element.underlying.classList.add(element)
+                true
+            } else
+                false
+        }
+
+    override fun clear() {
+        classes.clear()
+        element.underlying.className = ""
+    }
+
+    override fun remove(element: String) =
+        if (classes.remove(element)) {
+            this.element.underlying.classList.remove(element)
+            true
+        } else
+            false
 }

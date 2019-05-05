@@ -30,6 +30,7 @@ kotlin {
             //outputFile = "$projectDir/web/"
             noStdlib = true
             sourceMapEmbedSources = "always"
+            freeCompilerArgs += "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
         }
     }
 }

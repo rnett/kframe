@@ -4,6 +4,7 @@ import com.rnett.kframe.structure.data.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Text
 import org.w3c.dom.events.Event
+import kotlin.random.Random
 import kotlin.reflect.KProperty0
 
 @DslMarker
@@ -137,6 +138,9 @@ typealias Builder<E> = E.() -> Unit
 
 typealias AnyElement = Element<*, *>
 
+private val usedIds = mutableSetOf<String>()
+private val idRandom = Random(1)
+
 abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : ElementHost<S> {
 
     val underlying: U = kotlin.browser.document.createElement(tag) as U
@@ -145,6 +149,20 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
     val style = attributes.style
 
     var id by attributes.boxedValue<String>()
+
+    fun setRandomId(): String {
+        var id: String
+        var tries = 0
+        do {
+            id = String(List(16 * (tries / 10)) { idRandom.nextInt(65, 91) }.map { it.toChar() }.toCharArray())
+            tries++
+        } while (id in usedIds)
+        this.id = "random-$id"
+        return this.id!!
+    }
+
+    val idOrRandom get() = id ?: setRandomId()
+
     val classes get() = attributes.classes
     var klass
         get() = attributes.classes.raw
@@ -173,7 +191,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
     }
 
     @KframeDSL
-    operator fun invoke(builder: Builder<in S>): S {
+    inline operator fun invoke(builder: Builder<in S>): S {
         builder(this as S)
         return this
     }
@@ -217,9 +235,9 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
     inline operator fun String.invoke(useCapture: Boolean = false, noinline handler: (Event) -> Unit) =
         on(this, useCapture, handler)
 
-    operator fun invoke(klass: String = "", id: String = "", builder: Builder<in S> = {}): S {
+    inline operator fun invoke(klass: String = "", id: String = "", builder: Builder<in S> = {}): S {
         if (klass.isNotBlank())
-            this.klass = klass
+            this.classes += klass
 
         if (id.isNotBlank())
             this.id = id
