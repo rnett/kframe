@@ -1,5 +1,6 @@
 package com.rnett.kframe.structure
 
+import com.rnett.kframe.dom.input.IDataElement
 import com.rnett.kframe.structure.data.Binding
 import kotlin.browser.window
 
@@ -57,8 +58,9 @@ object Document {
     }
 
     fun postEventUpdate() {
-        postEventSubscribers.forEach { it() }
+        dataElements.forEach { it.update() }
         bindings.forEach { it.refresh() }
+        postEventSubscribers.forEach { it() }
     }
 
     fun goto(page: String, data: Parameters): Boolean {
@@ -108,6 +110,12 @@ object Document {
 
     fun addBinding(binding: Binding<*, *>) {
         bindings.add(binding)
+    }
+
+    private val dataElements = mutableListOf<IDataElement>()
+
+    fun addDataElement(element: IDataElement) {
+        dataElements.add(element)
     }
 }
 

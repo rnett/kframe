@@ -37,6 +37,7 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
 
     operator fun set(key: String, value: String) = set(key, Value.Box(value))
     operator fun set(key: String, value: Int) = set(key, Value.Box(value))
+    operator fun set(key: String, value: Double) = set(key, Value.Box(value))
 
     fun <T : Value> getValue(key: String) =
         this[key] as? T
@@ -65,6 +66,17 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
         }
     }
 
+    inner class FlagValueDelegate(val key: String?) : ReadWriteProperty<Any?, Boolean> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Boolean {
+            return (key ?: property.name) in attributes
+        }
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) {
+
+            this@Attributes[key ?: property.name] = if (value) Present else null
+        }
+    }
+
     operator fun <T: Value> provideDelegate(
         thisRef: Any?,
         prop: KProperty<*>
@@ -75,6 +87,8 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
 
     fun <T> boxedValue(key: String) = BoxValueDelegate<T>(key)
     fun <T> boxedValue() = BoxValueDelegate<T>(null)
+
+    fun flagValue(key: String? = null) = FlagValueDelegate(key)
 
     val style: Style
     val classes: Classes

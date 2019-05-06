@@ -42,7 +42,7 @@ inline fun ElementHost<*>.script(
     builder: BasicMetaBuilder<HTMLScriptElement> = {}
 ): BasicMetaElement<HTMLScriptElement> {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +BasicMetaElement<HTMLScriptElement>("script")(klass, id)(builder)
+    return +BasicMetaElement<HTMLScriptElement>("script")(klass, id, builder)
 }
 
 @KframeDSL

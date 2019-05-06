@@ -20,7 +20,7 @@ inline fun DisplayHost.ol(
     builder: Builder<OrderedList> = {}
 ): OrderedList {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +OrderedList()(klass, id)(builder)
+    return +OrderedList()(klass, id, builder)
 }
 
 @KframeDSL
@@ -30,7 +30,7 @@ inline fun DisplayHost.ul(
     builder: Builder<UnorderedList> = {}
 ): UnorderedList {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +UnorderedList()(klass, id)(builder)
+    return +UnorderedList()(klass, id, builder)
 }
 
 @KframeDSL
@@ -39,5 +39,5 @@ inline fun ListElement<*, *>.li(
     builder: BasicDisplayBuilder<HTMLLIElement> = {}
 ): BasicDisplayElement<HTMLLIElement> {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +BasicDisplayElement<HTMLLIElement>("li")(klass, id)(builder)
+    return +BasicDisplayElement<HTMLLIElement>("li")(klass, id, builder)
 }

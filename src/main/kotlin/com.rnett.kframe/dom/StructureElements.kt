@@ -16,7 +16,7 @@ inline fun DisplayHost.div(
     return +BasicDisplayElement<HTMLDivElement>("div")(klass, id, builder)
 }
 
-@KframeDSL
+/*@KframeDSL
 inline fun DisplayHost.button(
     klass: String = "", id: String = "",
     builder: BasicDisplayBuilder<HTMLButtonElement> = {}
@@ -24,8 +24,8 @@ inline fun DisplayHost.button(
     contract {
         callsInPlace(builder, InvocationKind.EXACTLY_ONCE)
     }
-    return +BasicDisplayElement<HTMLButtonElement>("button")(klass, id)(builder)
-}
+    return +BasicDisplayElement<HTMLButtonElement>("button")(klass, id, builder)
+}*/
 
 @KframeDSL
 inline fun DisplayHost.span(
@@ -35,7 +35,7 @@ inline fun DisplayHost.span(
     contract {
         callsInPlace(builder, InvocationKind.EXACTLY_ONCE)
     }
-    return +BasicDisplayElement<HTMLSpanElement>("span")(klass, id)(builder)
+    return +BasicDisplayElement<HTMLSpanElement>("span")(klass, id, builder)
 }
 
 
@@ -54,7 +54,7 @@ inline fun DisplayHost.img(
     contract {
         callsInPlace(builder, InvocationKind.EXACTLY_ONCE)
     }
-    return +ImageElement()(klass, id)(builder)
+    return +ImageElement()(klass, id, builder)
 }
 
 @KframeDSL
@@ -118,5 +118,5 @@ inline fun DisplayHost.p(
     builder: BasicDisplayBuilder<HTMLParagraphElement> = {}
 ): BasicDisplayElement<HTMLParagraphElement> {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +BasicDisplayElement<HTMLParagraphElement>("p")(klass, id)(builder)
+    return +BasicDisplayElement<HTMLParagraphElement>("p")(klass, id, builder)
 }

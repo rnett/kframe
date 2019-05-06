@@ -30,7 +30,7 @@ inline fun DisplayHost.small(
         callsInPlace(builder, InvocationKind.EXACTLY_ONCE)
     }
 
-    return +BasicDisplayElement<HTMLElement>("small")(klass, id)(builder)
+    return +BasicDisplayElement<HTMLElement>("small")(klass, id, builder)
 }
 
 inline fun Heading.secondaryText(builder: BasicDisplayBuilder<HTMLElement>): BasicDisplayElement<HTMLElement> {

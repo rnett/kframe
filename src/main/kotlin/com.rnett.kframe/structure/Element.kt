@@ -171,6 +171,10 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
             classes.addAll(v.split(" "))
         }
 
+
+    var required by attributes.flagValue()
+
+
     val _children = mutableListOf<Element<*, *>>()
     override val children: List<Element<*, *>> = _children
 
@@ -201,6 +205,8 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
         underlying.appendChild(t)
         return TextElement(t)
     }
+
+    val on by lazy { Events(this as S) }
 
     @KframeDSL
     inline fun on(event: String, useCapture: Boolean = false, noinline handler: (Event) -> Unit): EventHandler {

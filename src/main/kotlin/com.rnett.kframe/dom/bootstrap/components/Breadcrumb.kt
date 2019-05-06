@@ -32,7 +32,7 @@ inline fun DisplayHost.breadcrumb(
     builder: Builder<Breadcrumb> = {}
 ): Breadcrumb {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +Breadcrumb()(klass, id)(builder)
+    return +Breadcrumb()(klass, id, builder)
 }
 
 @KframeDSL

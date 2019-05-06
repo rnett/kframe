@@ -55,7 +55,7 @@ inline fun DisplayHost.table(
         callsInPlace(builder, InvocationKind.EXACTLY_ONCE)
     }
 
-    return +Table()(klass, id)(builder)
+    return +Table()(klass, id, builder)
 }
 
 @KframeDSL

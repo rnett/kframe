@@ -3,14 +3,17 @@ package com.rnett.kframe.dom.bootstrap.components
 import com.rnett.kframe.dom.AElement
 import com.rnett.kframe.dom.a
 import com.rnett.kframe.dom.bootstrap.ContextType
-import com.rnett.kframe.structure.*
+import com.rnett.kframe.structure.Builder
+import com.rnett.kframe.structure.DisplayElement
+import com.rnett.kframe.structure.DisplayHost
+import com.rnett.kframe.structure.KframeDSL
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLInputElement
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class Button(val type: ContextType?, val outline: Boolean = false) :
-    DisplayElement<HTMLButtonElement, Button>("button") {
+abstract class BaseButton<B : BaseButton<B>>(val type: ContextType?, val outline: Boolean = false) :
+    DisplayElement<HTMLButtonElement, B>("button") {
     init {
         attributes["type"] = "button"
         classes += "btn"
@@ -33,31 +36,33 @@ class Button(val type: ContextType?, val outline: Boolean = false) :
         classes += "btn-block"
     }
 
-    private var _active = false
-
-    var active: Boolean
-        get() = _active
-        set(v) {
-            if (v)
-                classes += "active"
-            else
-                classes -= "active"
-            _active = v
-        }
-
-    private var _disabled = false
-    var disabled: Boolean
-        get() = _disabled
-        set(v) {
-            if (v)
-                attributes["disabled"] = Attributes.Present
-            else
-                attributes["disabled"] = null
-
-            _disabled = v
-        }
+    var active by attributes.flagValue()
+    var disabled by attributes.flagValue()
 
 }
+
+class Button(type: ContextType?, outline: Boolean = false) : BaseButton<Button>(type, outline)
+
+@KframeDSL
+inline fun DisplayHost.button(
+    type: ContextType?, outline: Boolean = false,
+    klass: String = "", id: String = "",
+    builder: Builder<Button> = {}
+): Button {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +Button(type, outline)(klass, id, builder)
+}
+
+@KframeDSL
+inline fun DisplayHost.bootstrapButton(
+    type: ContextType?, outline: Boolean = false,
+    klass: String = "", id: String = "",
+    builder: Builder<Button> = {}
+): Button {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return button(type, outline, klass, id, builder)
+}
+
 
 fun AElement.asButton(type: ContextType?) {
     attributes["role"] = "button"
