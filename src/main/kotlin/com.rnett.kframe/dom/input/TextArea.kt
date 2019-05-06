@@ -17,6 +17,18 @@ open class BaseTextArea<S : BaseTextArea<S>>(
     val doSet: Boolean = true
 ) : IDataElement, DisplayElement<HTMLTextAreaElement, S>("textarea") {
 
+    init {
+        classes += "form-control"
+    }
+
+    fun large() {
+        classes += "form-control-lg"
+    }
+
+    fun small() {
+        classes += "form-control-sm"
+    }
+
     private var lastValue: String? = null
 
     private var _value: String

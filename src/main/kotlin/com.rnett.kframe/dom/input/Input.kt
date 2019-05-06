@@ -33,6 +33,18 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
     val doSet: Boolean = true
 ) : IDataElement, DisplayElement<HTMLInputElement, S>("input") {
 
+    init {
+        classes += "form-control"
+    }
+
+    fun large() {
+        classes += "form-control-lg"
+    }
+
+    fun small() {
+        classes += "form-control-sm"
+    }
+
     private var lastValue: R? = null
 
     private var _value: T
@@ -399,3 +411,24 @@ fun DisplayHost.optionalDoubleInputDelegate(
         builder()
     }
 }
+
+fun BaseInputElement<Int, *, *>.asRange(min: Int = 0, max: Int = 100, step: Int = 1) {
+    classes += "custom-range"
+    type = "range"
+    attributes["min"] = min
+    attributes["max"] = max
+    attributes["step"] = step
+}
+
+fun BaseInputElement<Int, *, *>.asRange(range: IntRange) = asRange(range.first, range.last, range.step)
+
+fun BaseInputElement<Double, *, *>.asRange(min: Double = 0.0, max: Double = 100.0, step: Double = 1.0) {
+    classes += "custom-range"
+    type = "range"
+    attributes["min"] = min
+    attributes["max"] = max
+    attributes["step"] = step
+}
+
+fun BaseInputElement<Double, *, *>.asRange(range: ClosedFloatingPointRange<Double>, step: Double = 1.0) =
+    asRange(range.start, range.endInclusive, step)

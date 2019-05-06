@@ -23,6 +23,18 @@ class Select<T>(
     val getValue: () -> T, val setValue: (T) -> Unit
 ) : DisplayElement<HTMLSelectElement, Select<T>>("select"), IDataElement {
 
+    init {
+        classes += "custom-select"
+    }
+
+    fun large() {
+        classes += "custom-select-lg"
+    }
+
+    fun small() {
+        classes += "custom-select-sm"
+    }
+
     var disabled by attributes.flagValue()
     var readonly by attributes.flagValue()
 
@@ -184,6 +196,18 @@ class OptionalSelect<T>(
     val options: List<T>, val displayValue: BasicDisplayElement<HTMLOptionElement>.(T) -> Unit,
     val getValue: () -> T?, val setValue: (T) -> Unit
 ) : DisplayElement<HTMLSelectElement, OptionalSelect<T>>("select"), IDataElement {
+
+    init {
+        classes += "custom-select"
+    }
+
+    fun large() {
+        classes += "custom-select-lg"
+    }
+
+    fun small() {
+        classes += "custom-select-sm"
+    }
 
     var disabled by attributes.flagValue()
     var readonly by attributes.flagValue()

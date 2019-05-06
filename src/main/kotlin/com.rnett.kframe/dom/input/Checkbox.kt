@@ -1,5 +1,7 @@
 package com.rnett.kframe.dom.input
 
+import com.rnett.kframe.dom.bootstrap.components.withLabel
+import com.rnett.kframe.dom.div
 import com.rnett.kframe.structure.Builder
 import com.rnett.kframe.structure.DisplayElement
 import com.rnett.kframe.structure.DisplayHost
@@ -25,7 +27,7 @@ abstract class BaseCheckbox<S : BaseCheckbox<S>>(
     var type by attributes.boxedValue<String>()
 
     init {
-        type = "checkbox"
+        type = "plainCheckbox"
     }
 
     var disabled by attributes.flagValue()
@@ -88,7 +90,7 @@ abstract class BaseCheckbox<S : BaseCheckbox<S>>(
 class Checkbox(getValue: () -> Boolean, setValue: (Boolean) -> Unit) : BaseCheckbox<Checkbox>(getValue, setValue)
 
 @KframeDSL
-fun DisplayHost.checkbox(
+fun DisplayHost.plainCheckbox(
     getValue: () -> Boolean, setValue: (Boolean) -> Unit,
     klass: String = "", id: String = "",
     builder: Builder<Checkbox> = {}
@@ -101,7 +103,7 @@ class PropertyCheckbox(val property: KMutableProperty0<Boolean>) :
     BaseCheckbox<PropertyCheckbox>(property::get, property::set)
 
 @KframeDSL
-inline fun DisplayHost.checkbox(
+inline fun DisplayHost.plainCheckbox(
     property: KMutableProperty0<Boolean>,
     klass: String = "", id: String = "",
     builder: Builder<PropertyCheckbox> = {}
@@ -120,7 +122,7 @@ class CheckboxDelegate(
 ) : ReadWriteProperty<Any?, Boolean> {
 
     var value: Boolean = initialValue
-    val checkboxElement = parent.checkbox(this::value, klass, id, builder)
+    val checkboxElement = parent.plainCheckbox(this::value, klass, id, builder)
 
     override fun getValue(thisRef: Any?, property: KProperty<*>) = value
 
@@ -130,11 +132,91 @@ class CheckboxDelegate(
 }
 
 @KframeDSL
-fun DisplayHost.checkboxDelegate(
+fun DisplayHost.plainCheckboxDelegate(
     initialValue: Boolean,
     klass: String = "", id: String = "",
     builder: Builder<PropertyCheckbox> = {}
 ): CheckboxDelegate {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
     return CheckboxDelegate(this, initialValue, klass, id, builder)
+}
+
+@KframeDSL
+fun DisplayHost.checkbox(
+    property: KMutableProperty0<Boolean>,
+    label: String,
+    klass: String = "", id: String = "",
+    builder: Builder<PropertyCheckbox> = {}
+): PropertyCheckbox {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    val result: PropertyCheckbox
+    div("custom-control custom-plainCheckbox") {
+        result = plainCheckbox(property, klass, id) {
+            classes += "custom-control-input"
+        }
+        result.withLabel(label) {
+            classes += "custom-control-label"
+        }
+    }
+    return result
+}
+
+@KframeDSL
+fun DisplayHost.checkboxDelegate(
+    initialValue: Boolean,
+    label: String,
+    klass: String = "", id: String = "",
+    builder: Builder<PropertyCheckbox> = {}
+): CheckboxDelegate {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    val result: CheckboxDelegate
+    div("custom-control custom-plainCheckbox") {
+        result = plainCheckboxDelegate(initialValue, klass, id) {
+            classes += "custom-control-input"
+        }
+        result.checkboxElement.withLabel(label) {
+            classes += "custom-control-label"
+        }
+    }
+    return result
+}
+
+@KframeDSL
+fun DisplayHost.switch(
+    property: KMutableProperty0<Boolean>,
+    label: String,
+    klass: String = "", id: String = "",
+    builder: Builder<PropertyCheckbox> = {}
+): PropertyCheckbox {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    val result: PropertyCheckbox
+    div("custom-control custom-switch") {
+        result = plainCheckbox(property, klass, id) {
+            classes += "custom-control-input"
+        }
+        result.withLabel(label) {
+            classes += "custom-control-label"
+        }
+    }
+    return result
+}
+
+@KframeDSL
+fun DisplayHost.switchDelegate(
+    initialValue: Boolean,
+    label: String,
+    klass: String = "", id: String = "",
+    builder: Builder<PropertyCheckbox> = {}
+): CheckboxDelegate {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    val result: CheckboxDelegate
+    div("custom-control custom-switch") {
+        result = plainCheckboxDelegate(initialValue, klass, id) {
+            classes += "custom-control-input"
+        }
+        result.checkboxElement.withLabel(label) {
+            classes += "custom-control-label"
+        }
+    }
+    return result
 }
