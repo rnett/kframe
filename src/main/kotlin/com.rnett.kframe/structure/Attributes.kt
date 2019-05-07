@@ -1,5 +1,6 @@
 package com.rnett.kframe.structure
 
+import com.rnett.kframe.dom.bootstrap.core.IHasClass
 import org.w3c.dom.get
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -130,4 +131,65 @@ class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Ele
             true
         } else
             false
+
+    inner class PresentDelegate internal constructor(val klass: String?, val prefix: String? = null) :
+        ReadWriteProperty<Any?, Boolean> {
+
+
+        val KProperty<*>.key get() = if (prefix == null) (klass ?: name) else "$prefix-${(klass ?: name)}"
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>) = property.key in this@Classes
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) {
+            if (value)
+                this@Classes.add(property.key)
+            else
+                this@Classes.remove(property.key)
+        }
+    }
+
+    val presentDelegate get() = PresentDelegate(null)
+    fun presentDelegate(klass: String?, prefix: String? = null) = PresentDelegate(klass, prefix)
+
+    inner class ClassDelegate<T> internal constructor(val toClass: (T) -> String, initialValue: T) :
+        ReadWriteProperty<Any?, T> {
+
+        var value: T = initialValue
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>) = value
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+            this@Classes.remove(toClass(this.value))
+            this@Classes.add(toClass(value))
+            this.value = value
+        }
+    }
+
+    fun <T> classDelegate(initialValue: T, toClass: (T) -> String) = ClassDelegate(toClass, initialValue)
+
+    inner class OptionalClassDelegate<T> internal constructor(val toClass: (T) -> String?, initialValue: T?) :
+        ReadWriteProperty<Any?, T?> {
+
+        var value: T? = initialValue
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>) = value
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+            if (this.value != null)
+                this@Classes.remove(toClass(this.value!!))
+
+            if (value != null)
+                toClass(value)?.let(this@Classes::add)
+            this.value = value
+        }
+    }
+
+    fun <T> optionalClassDelegate(initialValue: T? = null, toClass: (T) -> String?) =
+        OptionalClassDelegate(toClass, initialValue)
+
+    fun <T : IHasClass> classDelegate(initialValue: T) =
+        classDelegate(initialValue, { it.klass })
+
+    fun <T : IHasClass> optionalClassDelegate(initialValue: T? = null) =
+        optionalClassDelegate(initialValue, { it.klass })
 }

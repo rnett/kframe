@@ -22,6 +22,12 @@ inline fun Card.topImage(src: String, builder: Builder<ImageElement> = {}): Imag
 }
 
 @KframeDSL
+inline fun Card.image(src: String, builder: Builder<ImageElement> = {}): ImageElement {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return img(src = src, klass = "card-img", builder = builder)
+}
+
+@KframeDSL
 inline fun Card.body(builder: Builder<CardBody>): CardBody {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
     return +CardBody()(builder)

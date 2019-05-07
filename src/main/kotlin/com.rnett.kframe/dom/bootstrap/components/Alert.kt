@@ -3,30 +3,22 @@ package com.rnett.kframe.dom.bootstrap.components
 import com.rnett.kframe.dom.AElement
 import com.rnett.kframe.dom.bootstrap.ContextType
 import com.rnett.kframe.dom.bootstrap.Heading
-import com.rnett.kframe.dom.button
+import com.rnett.kframe.dom.bootstrap.core.ClassElement
+import com.rnett.kframe.dom.bootstrap.core.applyContext
+import com.rnett.kframe.dom.rawButton
 import com.rnett.kframe.dom.span
 import com.rnett.kframe.structure.Builder
-import com.rnett.kframe.structure.DisplayElement
 import com.rnett.kframe.structure.DisplayHost
 import com.rnett.kframe.structure.KframeDSL
 import org.w3c.dom.HTMLDivElement
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class Alert(val type: ContextType) : DisplayElement<HTMLDivElement, Alert>("div") {
+class Alert(val type: ContextType) : ClassElement<HTMLDivElement, Alert>("div", "alert") {
 
     init {
-        classes += "alert"
-        classes += type.klass("alert")
+        applyContext(type)
         attributes["role"] = "alert"
-    }
-
-    fun AElement.alertLink() {
-        this.classes += "alert-link"
-    }
-
-    fun Heading.alertHeading() {
-        this.classes += "alert-heading"
     }
 
     @KframeDSL
@@ -36,7 +28,7 @@ class Alert(val type: ContextType) : DisplayElement<HTMLDivElement, Alert>("div"
             classes += ".fade"
             classes += ".show"
         }
-        button("close") {
+        rawButton("close") {
             attributes["data-dismiss"] = "alert"
             attributes["aria-label"] = "Close"
             span {
@@ -46,7 +38,41 @@ class Alert(val type: ContextType) : DisplayElement<HTMLDivElement, Alert>("div"
         }
 
     }
+}
 
+@KframeDSL
+inline fun Alert.link(
+    href: String? = null,
+    klass: String = "", id: String = "",
+    builder: Builder<AElement> = {}
+): AElement {
+    contract {
+        callsInPlace(builder, InvocationKind.EXACTLY_ONCE)
+    }
+    return +AElement()(klass, id) {
+        if (href != null)
+            this.href = href
+
+        classes += "alert-link"
+
+        builder()
+    }
+}
+
+@KframeDSL
+inline fun Alert.heading(
+    level: Int = 4,
+    klass: String = "", id: String = "",
+    builder: Builder<Heading> = {}
+): Heading {
+    contract {
+        callsInPlace(builder, InvocationKind.EXACTLY_ONCE)
+    }
+
+    return +Heading(level)(klass, id) {
+        classes += "alert-heading"
+        builder()
+    }
 }
 
 @KframeDSL

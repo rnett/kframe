@@ -16,8 +16,8 @@ inline fun DisplayHost.div(
     return +BasicDisplayElement<HTMLDivElement>("div")(klass, id, builder)
 }
 
-/*@KframeDSL
-inline fun DisplayHost.button(
+@KframeDSL
+inline fun DisplayHost.rawButton(
     klass: String = "", id: String = "",
     builder: BasicDisplayBuilder<HTMLButtonElement> = {}
 ): BasicDisplayElement<HTMLButtonElement> {
@@ -25,7 +25,7 @@ inline fun DisplayHost.button(
         callsInPlace(builder, InvocationKind.EXACTLY_ONCE)
     }
     return +BasicDisplayElement<HTMLButtonElement>("button")(klass, id, builder)
-}*/
+}
 
 @KframeDSL
 inline fun DisplayHost.span(

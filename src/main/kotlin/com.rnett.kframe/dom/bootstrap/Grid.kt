@@ -1,5 +1,6 @@
 package com.rnett.kframe.dom.bootstrap
 
+import com.rnett.kframe.dom.bootstrap.core.IHasClass
 import com.rnett.kframe.dom.div
 import com.rnett.kframe.structure.Builder
 import com.rnett.kframe.structure.DisplayElement
@@ -12,54 +13,24 @@ import kotlin.contracts.contract
 class Row : DisplayElement<HTMLDivElement, Row>("div") {
     init {
         klass = "row"
-        div { }
     }
 
-    var gutters: Boolean
-        get() = "no-gutters" !in classes
-        set(v) {
-            if (v)
-                classes.remove("no-gutters")
-            else
-                classes.add("no-gutters")
-        }
+    var noGutters by classes.presentDelegate("no-gutters")
 
-    enum class Alignment(val klass: String) {
+    enum class Alignment(override val klass: String) : IHasClass {
         Start("align-items-start"), Center("align-items-center"), End("align-items-end");
     }
 
 
-    private var lastAlign: Alignment? = null
-    var alignItems: Alignment?
-        get() = lastAlign
-        set(v) {
-            if (lastAlign != null)
-                classes.remove(lastAlign!!.klass)
+    var alignItems by classes.optionalClassDelegate<Alignment>()
 
-            if (v != null)
-                classes.add(v.klass)
-
-            lastAlign = v
-        }
-
-    enum class Justification(val klass: String) {
+    enum class Justification(override val klass: String) : IHasClass {
         Start("justify-content-start"), Center("justify-content-center"), End("justify-content-end"),
         Around("justify-content-around"), Between("justify-content-between");
     }
 
 
-    private var lastJustify: Justification? = null
-    var justifyContent: Justification?
-        get() = lastJustify
-        set(v) {
-            if (lastJustify != null)
-                classes.remove(lastJustify!!.klass)
-
-            if (v != null)
-                classes.add(v.klass)
-
-            lastJustify = v
-        }
+    var justifyContent by classes.optionalClassDelegate<Justification>()
 
 }
 
@@ -88,36 +59,14 @@ class Column(val size: Size, val breakpoint: Breakpoints = Breakpoints.None) :
         klass = "col" + breakpoint.classAddon + size.classAddon
     }
 
-    enum class Alignment(val klass: String) {
+    enum class Alignment(override val klass: String) : IHasClass {
         Start("align-self-start"), Center("align-self-center"), End("align-self-end");
     }
 
 
-    private var lastAlign: Alignment? = null
-    var alignSelf: Alignment?
-        get() = lastAlign
-        set(v) {
-            if (lastAlign != null)
-                classes.remove(lastAlign!!.klass)
+    var alignSelf by classes.optionalClassDelegate<Alignment>()
 
-            if (v != null)
-                classes.add(v.klass)
-
-            lastAlign = v
-        }
-
-    private var lastOrder: Int? = null
-    var order: Int?
-        get() = lastOrder
-        set(v) {
-            if (lastOrder != null)
-                classes.remove("order-$lastOrder")
-
-            if (v != null)
-                classes.add("order-$v")
-
-            lastOrder = v
-        }
+    var order by classes.optionalClassDelegate<Int> { "order-$it" }
 
     private var lastOffset: Int? = null
     var offset: Int?

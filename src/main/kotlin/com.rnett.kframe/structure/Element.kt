@@ -1,5 +1,6 @@
 package com.rnett.kframe.structure
 
+import com.rnett.kframe.dom.input.IDataElement
 import com.rnett.kframe.structure.data.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Text
@@ -16,6 +17,10 @@ interface ElementHost<S : ElementHost<S>> {
 
     operator fun <T : AnyElement> T.unaryPlus(): T {
         addChild(this)
+
+        if (this is IDataElement)
+            Document.addDataElement(this)
+
         return this
     }
 
@@ -23,6 +28,7 @@ interface ElementHost<S : ElementHost<S>> {
 
     val children: List<Element<*, *>>
 
+    //TODO check instance of IDataElement for views?
 
     @BindingDSL
     fun <B : Binding<T, E>, T, E : AnyElement> bind(binding: B, watch: Boolean = true): B {
@@ -47,7 +53,7 @@ interface ElementHost<S : ElementHost<S>> {
         equalityCheck: EqualityCheck<*> = EqualityCheck.Equality
     ): ViewPropertyBinding<V, E, S> {
         val binding = ViewPropertyBinding(this@ElementHost as S, this, equalityCheck)
-        return bind(binding)
+        return bind(binding, watch)
     }
 
     @BindingDSL

@@ -3,6 +3,8 @@ package com.rnett.kframe.dom.bootstrap.components
 import com.rnett.kframe.dom.AElement
 import com.rnett.kframe.dom.a
 import com.rnett.kframe.dom.bootstrap.ContextType
+import com.rnett.kframe.dom.bootstrap.core.SizedClassElement
+import com.rnett.kframe.dom.bootstrap.core.applyContext
 import com.rnett.kframe.structure.Builder
 import com.rnett.kframe.structure.DisplayElement
 import com.rnett.kframe.structure.DisplayHost
@@ -13,28 +15,16 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 abstract class BaseButton<B : BaseButton<B>>(val type: ContextType?, val outline: Boolean = false) :
-    DisplayElement<HTMLButtonElement, B>("button") {
+    SizedClassElement<HTMLButtonElement, B>("button", "btn") {
+
     init {
         attributes["type"] = "button"
         classes += "btn"
-        classes += if (outline)
-            type?.klass("btn-outline") ?: "btn-link"
-        else
-            type?.klass("btn") ?: "btn-link"
 
+        applyContext(type, if (outline) "btn-outline" else null, "btn-link")
     }
 
-    fun large() {
-        classes += "btn-lg"
-    }
-
-    fun small() {
-        classes += "btn-sm"
-    }
-
-    fun block() {
-        classes += "btn-block"
-    }
+    var block by classes.presentDelegate.withClass
 
     var active by attributes.flagValue()
     var disabled by attributes.flagValue()
@@ -96,5 +86,4 @@ fun DisplayElement<HTMLInputElement, *>.asButton(
         type?.klass("btn") ?: "btn-link"
 }
 
-//TODO Checkbox and Radio button types w/ input
 //TODO button groups
