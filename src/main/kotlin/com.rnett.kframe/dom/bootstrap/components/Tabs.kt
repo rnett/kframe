@@ -52,9 +52,18 @@ fun TabNav.item(
 class TabItem : ClassElement<HTMLLIElement, TabItem>("li", "nav-item")
 
 class TabLink : ClassElement<HTMLAnchorElement, TabLink>("a", "nav-link") {
+
     var disabled by classes.presentDelegate
     var active by classes.presentDelegate
     var href by attributes.boxedValue<String>()
+
+    init {
+        data.toggle = "tab"
+    }
+
+    fun activate() {
+        underlying.asDynamic().tab("show")
+    }
 }
 
 @KframeDSL
@@ -102,10 +111,7 @@ class TabContent(val nav: TabNav) : ClassElement<HTMLDivElement, TabContent>("di
         }
 
     internal fun addNavFor(pane: TabPane, navBuilder: TabLink.(TabPane) -> Unit): TabLink {
-        val link = nav.linkItem {
-            data.toggle = "tab"
-            href = "#${pane.idOrRandom}"
-
+        val link = nav.linkItem("#${pane.idOrRandom}") {
             if (pane.active)
                 this.active = true
 
@@ -128,6 +134,9 @@ class TabPane : ClassElement<HTMLDivElement, TabPane>("div", "tab-pane") {
         active = true
     }
 
+    fun activate() {
+        (this.parent as TabContent).tabs.entries.first { it.value == this }.key.activate()
+    }
 
 }
 
