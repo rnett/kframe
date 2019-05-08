@@ -5,11 +5,16 @@ import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLHeadElement
 import org.w3c.dom.asList
 
-data class Parameters(val params: Map<String, String>): Map<String, String> by params
+data class Parameters(val params: Map<String, String>) : Map<String, String> by params
 
-class Page (val name: String, val url: String, val getTitle: (Parameters) -> String, val builder: Page.(Parameters) -> Unit) {
+class Page(
+    val name: String,
+    val url: String,
+    val getTitle: (Parameters) -> String,
+    val builder: Page.(Parameters) -> Unit
+) {
 
-    fun mount(){
+    fun mount() {
         body.underlying.innerHTML = ""
         head.underlying.innerHTML = ""
         builder(Document.parameters)

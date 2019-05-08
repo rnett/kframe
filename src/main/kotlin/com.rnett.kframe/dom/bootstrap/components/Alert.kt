@@ -29,7 +29,7 @@ class Alert(val type: ContextType) : ClassElement<HTMLDivElement, Alert>("div", 
             classes += ".show"
         }
         rawButton("close") {
-            attributes["data-dismiss"] = "alert"
+            data.dismiss = "alert"
             attributes["aria-label"] = "Close"
             span {
                 attributes["aria-hidden"] = "true"

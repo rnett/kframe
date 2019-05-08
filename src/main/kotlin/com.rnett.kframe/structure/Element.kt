@@ -153,6 +153,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
 
     val attributes = Attributes(mutableMapOf(), this)
     val style = attributes.style
+    val data = Data(this)
 
     var id by attributes.boxedValue<String>()
 
@@ -257,6 +258,26 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
         builder(this as S)
 
         return this
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class.js != other::class.js) return false
+
+        other as Element<*, *>
+
+        if (tag != other.tag) return false
+        if (underlying != other.underlying) return false
+        if (attributes != other.attributes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = tag.hashCode()
+        result = 31 * result + underlying.hashCode()
+        result = 31 * result + attributes.hashCode()
+        return result
     }
 
 }

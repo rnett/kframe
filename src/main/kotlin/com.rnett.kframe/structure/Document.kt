@@ -28,11 +28,11 @@ object Document {
     private val pagesByUrl: MutableMap<String, Page> = mutableMapOf()
     private val pagesByName: MutableMap<String, Page> = mutableMapOf()
 
-    fun addPage(page: Page){
-        if(page.url in pagesByUrl)
+    fun addPage(page: Page) {
+        if (page.url in pagesByUrl)
             throw IllegalArgumentException("Page with url ${page.url} already registered")
 
-        if(page.name in pagesByName)
+        if (page.name in pagesByName)
             throw IllegalArgumentException("Page with baseName ${page.name} already registered")
 
         pagesByUrl[page.url] = page
@@ -119,13 +119,14 @@ object Document {
     }
 }
 
-fun site(builder: Document.() -> Unit){
+fun site(builder: Document.() -> Unit) {
     Document.builder()
 
     var url = window.location.href
 
-    if("?routerurl=" in window.location.href){
-       url = window.location.protocol + "//" + window.location.hostname + window.location.href.substringAfter("?routerurl=")
+    if ("?routerurl=" in window.location.href) {
+        url =
+            window.location.protocol + "//" + window.location.hostname + window.location.href.substringAfter("?routerurl=")
     }
 
     if (!Document.gotoUrl(url)) {

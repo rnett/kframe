@@ -17,7 +17,7 @@ class Dropdown(val buttonType: ContextType?) : ClassElement<HTMLDivElement, Drop
 
     val button = button(buttonType) {
         classes += "dropdown-toggle"
-        attributes["data-toggle"] = "dropdown"
+        data.toggle = "dropdown"
     }
 
     val menu = div("dropdown-menu") {

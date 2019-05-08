@@ -5,13 +5,28 @@ import org.w3c.dom.get
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class Attributes(private val attributes: MutableMap<String, Value>, val element: Element<*, *>){
+class Attributes(private val attributes: MutableMap<String, Value>, val element: Element<*, *>) {
     abstract class Value {
         abstract val raw: String
 
         data class Raw(override val raw: String) : Value()
-        data class Box<T>(val value: T): Value(){
+        data class Box<T>(val value: T) : Value() {
             override val raw = value.toString()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class.js != other::class.js) return false
+
+            other as Value
+
+            if (raw != other.raw) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return raw.hashCode()
         }
     }
 
@@ -21,7 +36,7 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
 
     operator fun get(key: String) = attributes[key]
     operator fun set(key: String, value: Value?) {
-        if(value == null) {
+        if (value == null) {
             attributes.remove(key)
             element.underlying.attributes.removeNamedItem(key)
         } else {
@@ -43,7 +58,7 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
     fun <T : Value> getValue(key: String) =
         this[key] as? T
 
-    inner class ValueDelegate<T: Value>(val key: String?): ReadWriteProperty<Any?, T?> {
+    inner class ValueDelegate<T : Value>(val key: String?) : ReadWriteProperty<Any?, T?> {
         override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
             return getValue(key ?: property.name)
         }
@@ -53,14 +68,14 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
         }
     }
 
-    inner class BoxValueDelegate<T>(val key: String?): ReadWriteProperty<Any?, T?> {
+    inner class BoxValueDelegate<T>(val key: String?) : ReadWriteProperty<Any?, T?> {
         override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
             return getValue<Value.Box<T>>(key ?: property.name)?.value
         }
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
 
-            if(value == null)
+            if (value == null)
                 this@Attributes[key ?: property.name] = null
             else
                 this@Attributes[key ?: property.name] = Value.Box(value)
@@ -78,13 +93,8 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
         }
     }
 
-    operator fun <T: Value> provideDelegate(
-        thisRef: Any?,
-        prop: KProperty<*>
-    ) = ValueDelegate<T>(prop.name)
-
-    fun <T: Value> value(key: String) = ValueDelegate<T>(key)
-    fun <T: Value> value() = ValueDelegate<T>(null)
+    fun <T : Value> value(key: String) = ValueDelegate<T>(key)
+    fun <T : Value> value() = ValueDelegate<T>(null)
 
     fun <T> boxedValue(key: String) = BoxValueDelegate<T>(key)
     fun <T> boxedValue() = BoxValueDelegate<T>(null)
@@ -94,7 +104,7 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
     val style: Style
     val classes: Classes
 
-    init{
+    init {
         style = Style(mutableMapOf(), element)
         this["style"] = style
 
@@ -103,6 +113,21 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
     }
 
     operator fun invoke(builder: Attributes.() -> Unit) = builder()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class.js != other::class.js) return false
+
+        other as Attributes
+
+        if (attributes != other.attributes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return attributes.hashCode()
+    }
+
 }
 
 class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Element<*, *>) :
@@ -192,4 +217,19 @@ class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Ele
 
     fun <T : IHasClass> optionalClassDelegate(initialValue: T? = null) =
         optionalClassDelegate(initialValue, { it.klass })
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class.js != other::class.js) return false
+
+        other as Classes
+
+        if (classes != other.classes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return classes.hashCode()
+    }
 }

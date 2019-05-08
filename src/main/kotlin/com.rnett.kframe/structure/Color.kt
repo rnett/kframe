@@ -416,7 +416,7 @@ data class HexColor(var hexString: String) : Color() {
         set(value) {
             val rgb = getRGB()
             hexString =
-                    "#${rgb.first.formatHex()}${rgb.second.formatHex()}${rgb.third.formatHex()}${(value * 255).toInt().formatHex()}"
+                "#${rgb.first.formatHex()}${rgb.second.formatHex()}${rgb.third.formatHex()}${(value * 255).toInt().formatHex()}"
         }
 
     override fun toCSS(): String = hexString

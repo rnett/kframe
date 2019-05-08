@@ -85,11 +85,6 @@ class Style(private val rules: MutableMap<String, Value>, val element: Element<*
         }
     }
 
-    operator fun <T : Value> provideDelegate(
-        thisRef: Any?,
-        prop: KProperty<*>
-    ) = ValueDelegate<T>(prop.name)
-
     fun <T : Value> value(key: String, prefix: String) = ValueDelegate<T>(key, prefix)
     fun <T : Value> value(key: String) = ValueDelegate<T>(key)
     fun <T : Value> value() = ValueDelegate<T>(null)
@@ -104,6 +99,24 @@ class Style(private val rules: MutableMap<String, Value>, val element: Element<*
     override val raw get() = toRaw()
 
     operator fun invoke(builder: Style.() -> Unit) = builder()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class.js != other::class.js) return false
+        if (!super.equals(other)) return false
+
+        other as Style
+
+        if (rules != other.rules) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + rules.hashCode()
+        return result
+    }
 
     abstract inner class CompositeStyle(val baseName: String, val prefix: String) {
 

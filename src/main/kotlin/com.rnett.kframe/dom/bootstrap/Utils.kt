@@ -41,5 +41,14 @@ inline fun DisplayHost.container(
     builder: BasicDisplayBuilder<HTMLDivElement> = {}
 ): BasicDisplayElement<HTMLDivElement> {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +BasicDisplayElement<HTMLDivElement>("div")(klass + " container", id, builder)
+    return +BasicDisplayElement<HTMLDivElement>("div")("$klass container", id, builder)
+}
+
+@KframeDSL
+inline fun DisplayHost.containerFluid(
+    klass: String = "", id: String = "",
+    builder: BasicDisplayBuilder<HTMLDivElement> = {}
+): BasicDisplayElement<HTMLDivElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicDisplayElement<HTMLDivElement>("div")("$klass container-fluid", id, builder)
 }

@@ -11,8 +11,8 @@ import kotlin.contracts.contract
 class CollapseButton(val targetId: String, type: ContextType?, outline: Boolean = false) :
     BaseButton<CollapseButton>(type, outline) {
     init {
-        attributes["data-toggle"] = "collapse"
-        attributes["data-target"] = "#$targetId"
+        data.toggle = "collapse"
+        data.target = "#$targetId"
     }
 }
 
