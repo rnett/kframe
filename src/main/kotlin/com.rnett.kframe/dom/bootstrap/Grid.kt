@@ -46,7 +46,7 @@ inline fun DisplayHost.row(
     return +Row()(id = id)(builder)
 }
 
-class Column(val size: Size, val breakpoint: Breakpoints = Breakpoints.None) :
+class Column(val size: Size, val breakpoint: Breakpoint = Breakpoint.None) :
     DisplayElement<HTMLDivElement, Column>("div") {
 
     sealed class Size(val classAddon: String) {
@@ -86,7 +86,7 @@ class Column(val size: Size, val breakpoint: Breakpoints = Breakpoints.None) :
 @KframeDSL
 inline fun Row.col(
     size: Column.Size,
-    breakpoint: Breakpoints = Breakpoints.None,
+    breakpoint: Breakpoint = Breakpoint.None,
     id: String = "",
     builder: Builder<Column> = {}
 ): Column {
@@ -99,7 +99,7 @@ inline fun Row.col(
 @KframeDSL
 inline fun Row.col(
     size: Int? = null,
-    breakpoint: Breakpoints = Breakpoints.None,
+    breakpoint: Breakpoint = Breakpoint.None,
     id: String = "",
     builder: Builder<Column> = {}
 ): Column {

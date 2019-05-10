@@ -5,6 +5,7 @@ import com.rnett.kframe.structure.data.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Text
 import org.w3c.dom.events.Event
+import org.w3c.dom.get
 import kotlin.random.Random
 import kotlin.reflect.KProperty0
 
@@ -147,15 +148,21 @@ typealias AnyElement = Element<*, *>
 private val usedIds = mutableSetOf<String>()
 private val idRandom = Random(1)
 
-abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : ElementHost<S> {
+abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : ElementHost<S> {
 
-    val underlying: U = kotlin.browser.document.createElement(tag) as U
+    var tag: String = tag
+        private set
+
+    var underlying: U = kotlin.browser.document.createElement(tag) as U
+        private set
 
     val attributes = Attributes(mutableMapOf(), this)
     val style = attributes.style
     val data = Data(this)
 
     var id by attributes.boxedValue<String>()
+
+    var title by attributes.boxedValue<String>()
 
     fun setRandomId(): String {
         var id: String
@@ -199,6 +206,22 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(val tag: String) : El
 
     fun remove() {
         underlying.remove()
+    }
+
+    /**
+     * This will result in errors if you attempt to access a no-longer present field of underlying
+     *
+     * TODO check
+     */
+    fun replaceUnderlyingWith(newTag: String) {
+        val new = kotlin.browser.document.createElement(newTag).asDynamic() as U
+
+        new.innerHTML = underlying.innerHTML
+        underlying.getAttributeNames().forEach {
+            //TODO make sure this adds attributes
+            new.setAttribute(it, underlying.attributes[it]!!.value)
+        }
+        this.underlying = new
     }
 
     @KframeDSL

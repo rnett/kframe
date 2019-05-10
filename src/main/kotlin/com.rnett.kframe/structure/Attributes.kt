@@ -1,7 +1,14 @@
 package com.rnett.kframe.structure
 
 import com.rnett.kframe.dom.bootstrap.core.IHasClass
-import org.w3c.dom.get
+import kotlin.collections.MutableMap
+import kotlin.collections.MutableSet
+import kotlin.collections.contains
+import kotlin.collections.joinToString
+import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
+import kotlin.collections.remove
+import kotlin.collections.set
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -35,17 +42,17 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
     }
 
     operator fun get(key: String) = attributes[key]
-    operator fun set(key: String, value: Value?) {
+    operator fun set(key: String, value: Value?) { //TODO make sure this adds attributes
         if (value == null) {
             attributes.remove(key)
-            element.underlying.attributes.removeNamedItem(key)
+            element.underlying.removeAttribute(key)
         } else {
             attributes[key] = value
 
             if (value == Present)
-                element.underlying.attributes[key]?.value = key
+                element.underlying.setAttribute(key, key)
             else
-                element.underlying.attributes[key]?.value = value.raw
+                element.underlying.setAttribute(key, value.raw)
         }
 
 
@@ -127,6 +134,8 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
     override fun hashCode(): Int {
         return attributes.hashCode()
     }
+
+    operator fun contains(s: String): Boolean = s in attributes
 
 }
 

@@ -213,6 +213,30 @@ class Style(private val rules: MutableMap<String, Value>, val element: Element<*
     var maxWidth by value<Size>()
     var minWidth by value<Size>()
 
+    // Sets both width and height
+    var size: Size?
+        get() = if (width == height) width else null
+        set(v) {
+            width = v
+            height = v
+        }
+
+    // Sets both width and height
+    var maxSize: Size?
+        get() = if (maxWidth == maxHeight) maxWidth else null
+        set(v) {
+            maxWidth = v
+            maxHeight = v
+        }
+
+    // Sets both width and height
+    var minSize: Size?
+        get() = if (minWidth == minHeight) minWidth else null
+        set(v) {
+            minWidth = v
+            minHeight = v
+        }
+
     inner class Text {
         var align by boxedValue<String>("align", "text")
         var decoration by boxedValue<String>("decoration", "text")

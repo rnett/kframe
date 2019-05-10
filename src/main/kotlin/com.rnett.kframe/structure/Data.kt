@@ -36,5 +36,8 @@ class Data(val element: Element<*, *>) {
     var target by this
     var dismiss by this
     var toggle by this
+    var content by this
+    var placement by this
+    var trigger by this
 
 }

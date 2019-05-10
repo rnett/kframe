@@ -21,7 +21,7 @@ abstract class BaseButton<B : BaseButton<B>>(val type: ContextType?, val outline
         attributes["type"] = "button"
         classes += "btn"
 
-        applyContext(type, if (outline) "btn-outline" else null, "btn-link")
+        applyContext(type, if (outline) "btn-outline" else null)
     }
 
     var block by classes.presentDelegate.withClass

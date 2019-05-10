@@ -39,7 +39,7 @@ class Dropdown(val buttonType: ContextType?) : ClassElement<HTMLDivElement, Drop
 
 @KframeDSL
 inline fun DisplayHost.dropdown(
-    buttonType: ContextType?,
+    buttonType: ContextType? = null,
     klass: String = "", id: String = "",
     builder: Builder<Dropdown> = {}
 ): Dropdown {
