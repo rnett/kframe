@@ -18,7 +18,8 @@ import kotlin.contracts.contract
 
 class Modal : ClassElement<HTMLDivElement, Modal>("div", "modal") {
     init {
-        attributes["role"] = "dialog"
+        role = "dialog"
+        aria.modal = true
     }
 
     enum class Size(val klass: String?) {
@@ -28,7 +29,7 @@ class Modal : ClassElement<HTMLDivElement, Modal>("div", "modal") {
     var size by classes.optionalClassDelegate<Size> { it.klass }.withClass
 
     val dialog = div("modal-dialog") {
-        attributes["role"] = "document"
+        role = "document"
     }
 
     @Deprecated("You are most likely looking for Modal.body", replaceWith = ReplaceWith("body"))
@@ -73,7 +74,9 @@ class ModalHeader : ClassElement<HTMLDivElement, ModalHeader>("div", "modal-head
     fun closeButton() {
         rawButton("close") {
             data.dismiss = "modal"
+            aria.label = "close"
             span {
+                aria.hidden = true
                 +"&times;"
             }
         }
@@ -103,6 +106,11 @@ inline fun ModalHeader.title(
 
         builder()
     }
+}
+
+fun Button.activateModal(id: String) {
+    data.toggle = "modal"
+    data.target = "#$id"
 }
 
 fun Button.activateModal(modal: Modal) {

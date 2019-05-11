@@ -27,12 +27,21 @@ class ProgressBar : ClassElement<HTMLDivElement, ProgressBar>("div", "progress-b
 
     private var text = +""
 
+    var ariaMultiplier: Double = 1.0
+
+    init {
+        aria.valuemin = 0.0
+        aria.valuemax = 100.0 * ariaMultiplier
+        aria.valuenow = 0.0
+    }
+
     private var _width: Int = 0
     var width
         get() = _width
         set(v) {
             _width = v
             style.width = v.percent
+            aria.valuenow = v * ariaMultiplier
             if (useLabel)
                 text.value = "$v%"
         }

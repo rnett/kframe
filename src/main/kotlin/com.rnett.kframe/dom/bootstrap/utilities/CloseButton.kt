@@ -20,8 +20,10 @@ fun DisplayHost.closeButton(
     return rawButton(klass = klass, id = id) {
         classes += "close"
         attributes["type"] = "button"
+        aria.label = "close"
         span {
             +"&times;"
+            aria.hidden = true
         }
 
         builder()

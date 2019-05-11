@@ -18,7 +18,7 @@ class Alert(val type: ContextType) : ClassElement<HTMLDivElement, Alert>("div", 
 
     init {
         applyContext(type)
-        attributes["role"] = "alert"
+        role = "alert"
     }
 
     @KframeDSL

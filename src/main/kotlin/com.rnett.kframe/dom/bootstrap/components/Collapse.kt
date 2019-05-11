@@ -13,6 +13,10 @@ class CollapseButton(val targetId: String, type: ContextType?, outline: Boolean 
     init {
         data.toggle = "collapse"
         data.target = "#$targetId"
+        role = "button"
+
+        aria.expanded = false
+        aria.controls = targetId.substringAfter('#')
     }
 }
 
@@ -42,3 +46,5 @@ inline fun DisplayHost.collapseButton(
 fun Element<*, *>.makeCollapsible() {
     classes += "collapse"
 }
+
+//TODO Accordion

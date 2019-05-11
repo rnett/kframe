@@ -30,7 +30,7 @@ class TabNav : ClassElement<HTMLOListElement, TabNav>("ol", "nav") {
 
     init {
         classes += "nav-tabs"
-        attributes["role"] = "tablist"
+        role = "tablist"
     }
 
     internal val _items = mutableListOf<TabItem>()
@@ -59,6 +59,7 @@ class TabLink : ClassElement<HTMLAnchorElement, TabLink>("a", "nav-link") {
 
     init {
         data.toggle = "tab"
+        role = "tab"
     }
 
     fun activate() {
@@ -111,12 +112,17 @@ class TabContent(val nav: TabNav) : ClassElement<HTMLDivElement, TabContent>("di
         }
 
     internal fun addNavFor(pane: TabPane, navBuilder: TabLink.(TabPane) -> Unit): TabLink {
-        val link = nav.linkItem("#${pane.idOrRandom}") {
+        val paneId = pane.idOrRandom
+        val link = nav.linkItem("#$paneId") {
             if (pane.active)
                 this.active = true
 
+            aria.controls = paneId
+
             navBuilder(pane)
         }
+
+        pane.aria.labelledby = link.idOrRandom
 
         _tabs[link] = pane
 
@@ -138,6 +144,9 @@ class TabPane : ClassElement<HTMLDivElement, TabPane>("div", "tab-pane") {
         (this.parent as TabContent).tabs.entries.first { it.value == this }.key.activate()
     }
 
+    init {
+        role = "tabpannel"
+    }
 }
 
 @KframeDSL

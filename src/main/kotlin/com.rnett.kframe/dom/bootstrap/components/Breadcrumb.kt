@@ -15,6 +15,10 @@ class Breadcrumb : DisplayElement<HTMLElement, Breadcrumb>("nav") {
 
     }
 
+    init {
+        aria.label = "breadcrumb"
+    }
+
     @KframeDSL
     inline fun oldItem(url: String, builder: Builder<AElement> = {}) {
         listElement.li("breadcrumb-item").a(href = url, builder = builder)
@@ -22,7 +26,10 @@ class Breadcrumb : DisplayElement<HTMLElement, Breadcrumb>("nav") {
 
     @KframeDSL
     inline fun currentItem(builder: BasicDisplayBuilder<HTMLLIElement> = {}) {
-        listElement.li("breadcrumb-item active", builder = builder)
+        listElement.li("breadcrumb-item active") {
+            aria.current = "page"
+            builder()
+        }
     }
 }
 

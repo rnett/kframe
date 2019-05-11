@@ -1,6 +1,9 @@
 package com.rnett.kframe.dom.bootstrap.components
 
 import com.rnett.kframe.structure.*
+import com.rnett.kframe.structure.addons.`$`
+import com.rnett.kframe.structure.addons.get
+import com.rnett.kframe.structure.addons.id
 import org.w3c.dom.HTMLLabelElement
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -10,6 +13,9 @@ class Label(target: String) : DisplayElement<HTMLLabelElement, Label>("label") {
 
     init {
         this.target = target
+        Document[`$`.id(target)].forEach {
+            //aria.labelledby = this.idOrRandom //TODO this will use random even if id is set in creation method
+        }
     }
 }
 
@@ -43,7 +49,9 @@ inline fun DisplayHost.label(
     builder: Builder<Label> = {}
 ): Label {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +Label(target.idOrRandom)(klass, id, builder)
+    val l = +Label(target.idOrRandom)(klass, id, builder)
+    target.aria.labelledby = l.idOrRandom
+    return l
 }
 
 @KframeDSL
@@ -53,7 +61,7 @@ inline fun DisplayHost.label(
     builder: Builder<Label> = {}
 ): Label {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +Label(target.idOrRandom)(klass, id) {
+    return +label(target, klass, id) {
         +text
         builder()
     }

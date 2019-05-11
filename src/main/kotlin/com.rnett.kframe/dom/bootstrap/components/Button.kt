@@ -55,7 +55,7 @@ inline fun DisplayHost.bootstrapButton(
 
 
 fun AElement.asButton(type: ContextType? = null) {
-    attributes["role"] = "button"
+    role = "button"
     classes += "btn"
     classes += type?.klass("btn") ?: "btn-link"
 }

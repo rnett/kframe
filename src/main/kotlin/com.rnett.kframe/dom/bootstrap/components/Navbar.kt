@@ -34,6 +34,10 @@ class Navbar : ClassElement<HTMLElement, Navbar>("nav", "navbar") {
         nav.classes.remove("nav")
         nav.classes.add("navbar-nav")
     }
+
+    init {
+        role = "navigation"
+    }
 }
 
 @KframeDSL
