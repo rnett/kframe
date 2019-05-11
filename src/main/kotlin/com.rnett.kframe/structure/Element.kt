@@ -1,5 +1,6 @@
 package com.rnett.kframe.structure
 
+import com.rnett.kframe.dom.bootstrap.utilities.Bootstrap
 import com.rnett.kframe.dom.input.IDataElement
 import com.rnett.kframe.structure.data.*
 import org.w3c.dom.HTMLElement
@@ -159,6 +160,8 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
     val attributes = Attributes(mutableMapOf(), this)
     val style = attributes.style
     val data = Data(this)
+    val aria = Aria(this)
+    val bootstrap = Bootstrap(this)
 
     var id by attributes.boxedValue<String>()
 
@@ -187,6 +190,10 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
 
 
     var required by attributes.flagValue()
+
+    var srOnly by classes.presentDelegate("sr-only")
+
+    var role by attributes.boxedValue<String>()
 
 
     val _children = mutableListOf<Element<*, *>>()

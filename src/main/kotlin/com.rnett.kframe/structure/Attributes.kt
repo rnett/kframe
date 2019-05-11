@@ -1,13 +1,6 @@
 package com.rnett.kframe.structure
 
 import com.rnett.kframe.dom.bootstrap.core.IHasClass
-import kotlin.collections.MutableMap
-import kotlin.collections.MutableSet
-import kotlin.collections.contains
-import kotlin.collections.joinToString
-import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
-import kotlin.collections.remove
 import kotlin.collections.set
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -58,9 +51,14 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
 
     }
 
-    operator fun set(key: String, value: String) = set(key, Value.Box(value))
-    operator fun set(key: String, value: Int) = set(key, Value.Box(value))
-    operator fun set(key: String, value: Double) = set(key, Value.Box(value))
+    fun remove(key: String) {
+        attributes.remove(key)
+        element.underlying.removeAttribute(key)
+    }
+
+    operator fun set(key: String, value: String?) = set(key, value?.let { Value.Box(it) })
+    operator fun set(key: String, value: Int?) = set(key, value?.let { Value.Box(it) })
+    operator fun set(key: String, value: Double?) = set(key, value?.let { Value.Box(it) })
 
     fun <T : Value> getValue(key: String) =
         this[key] as? T
@@ -83,7 +81,7 @@ class Attributes(private val attributes: MutableMap<String, Value>, val element:
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
 
             if (value == null)
-                this@Attributes[key ?: property.name] = null
+                this@Attributes.remove(key ?: property.name)
             else
                 this@Attributes[key ?: property.name] = Value.Box(value)
         }
@@ -226,6 +224,10 @@ class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Ele
 
     fun <T : IHasClass> optionalClassDelegate(initialValue: T? = null) =
         optionalClassDelegate(initialValue, { it.klass })
+
+    operator fun plusAssign(klass: String) {
+        classes += klass
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,6 +1,7 @@
 package com.rnett.kframe.dom.bootstrap
 
-import com.rnett.kframe.dom.bootstrap.core.IHasClass
+import com.rnett.kframe.dom.bootstrap.utilities.Alignment
+import com.rnett.kframe.dom.bootstrap.utilities.Justification
 import com.rnett.kframe.dom.div
 import com.rnett.kframe.structure.Builder
 import com.rnett.kframe.structure.DisplayElement
@@ -17,17 +18,8 @@ class Row : DisplayElement<HTMLDivElement, Row>("div") {
 
     var noGutters by classes.presentDelegate("no-gutters")
 
-    enum class Alignment(override val klass: String) : IHasClass {
-        Start("align-items-start"), Center("align-items-center"), End("align-items-end");
-    }
 
-
-    var alignItems by classes.optionalClassDelegate<Alignment>()
-
-    enum class Justification(override val klass: String) : IHasClass {
-        Start("justify-content-start"), Center("justify-content-center"), End("justify-content-end"),
-        Around("justify-content-around"), Between("justify-content-between");
-    }
+    var alignItems by classes.optionalClassDelegate<Alignment> { it.itemClass }
 
 
     var justifyContent by classes.optionalClassDelegate<Justification>()
@@ -59,12 +51,7 @@ class Column(val size: Size, val breakpoint: Breakpoint = Breakpoint.None) :
         klass = "col" + breakpoint.classAddon + size.classAddon
     }
 
-    enum class Alignment(override val klass: String) : IHasClass {
-        Start("align-self-start"), Center("align-self-center"), End("align-self-end");
-    }
-
-
-    var alignSelf by classes.optionalClassDelegate<Alignment>()
+    var alignSelf by classes.optionalClassDelegate<Alignment> { it.selfClass }
 
     var order by classes.optionalClassDelegate<Int> { "order-$it" }
 

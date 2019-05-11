@@ -35,7 +35,7 @@ class Button(type: ContextType?, outline: Boolean = false) : BaseButton<Button>(
 
 @KframeDSL
 inline fun DisplayHost.button(
-    type: ContextType?, outline: Boolean = false,
+    type: ContextType? = null, outline: Boolean = false,
     klass: String = "", id: String = "",
     builder: Builder<Button> = {}
 ): Button {
@@ -54,7 +54,7 @@ inline fun DisplayHost.bootstrapButton(
 }
 
 
-fun AElement.asButton(type: ContextType?) {
+fun AElement.asButton(type: ContextType? = null) {
     attributes["role"] = "button"
     classes += "btn"
     classes += type?.klass("btn") ?: "btn-link"
