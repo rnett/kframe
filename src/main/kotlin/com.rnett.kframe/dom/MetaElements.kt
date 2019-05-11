@@ -12,14 +12,14 @@ class TitleElement() : MetaElement<HTMLTitleElement, TitleElement>("title") {
 
     private val titleElement = +""
 
-    var title: String
+    var titleText: String
         get() = titleElement.value
         set(v) {
             titleElement.value = v
         }
 
     constructor(title: String) : this() {
-        this.title = title
+        this.titleText = title
     }
 
 }

@@ -2,10 +2,6 @@ package com.rnett.kframe.dom.bootstrap.utilities
 
 import com.rnett.kframe.dom.bootstrap.core.IHasClass
 
-//TODO https://getbootstrap.com/docs/4.3/utilities/borders/
-// probably use enums and class delegates
-
-
 enum class Borders(override val klass: String) : IHasClass {
     All("border"),
     Top("border-top"), Right("border-right"), Bottom("border-bottom"), Left("border-left");
