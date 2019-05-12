@@ -135,6 +135,7 @@ open class W3ElementWrapper<S : W3ElementWrapper<S, U>, U : org.w3c.dom.Element>
     ElementHost<S> {
 
     override fun addChild(child: Element<*, *>) {
+        console.log("Adding ", child.underlying, " to ", this.underlying)
         underlying.appendChild(child.underlying)
         _children.add(child)
         child.onAdded(this)
