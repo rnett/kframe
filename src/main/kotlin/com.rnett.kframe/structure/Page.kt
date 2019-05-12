@@ -5,6 +5,7 @@ import com.rnett.kframe.structure.Document.url
 import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLHeadElement
 import org.w3c.dom.asList
+import kotlin.browser.document
 
 data class Parameters(val params: Map<String, String>) : Map<String, String> by params
 
@@ -41,35 +42,32 @@ class Page(
     }
 
     @KframeDSL
-    val head get() = Head()
+    val head
+        get() = Head()
     @KframeDSL
-    val body get() = Body()
+    val body
+        get() = Body()
 
 }
 
 class Body internal constructor() :
     W3ElementWrapper<Body, HTMLBodyElement>(
-        (kotlin.browser.document.getElementsByTagName("body").asList().firstOrNull()
-            ?: kotlin.browser.document.createElement("body")) as HTMLBodyElement
+        (kotlin.browser.document.getElementsByTagName("body").asList().firstOrNull() as HTMLBodyElement?
+            ?: kotlin.browser.document.createElement("body").also {
+                document.documentElement?.appendChild(it)
+            } as HTMLBodyElement)
     ),
     IDisplayHost<Body> {
     operator fun invoke(builder: Body.() -> Unit) = apply(builder)
-
-    init {
-        //kotlin.browser.document.documentElement?.appendChild(this.underlying)
-    }
-
 }
 
 class Head internal constructor() :
     W3ElementWrapper<Head, HTMLHeadElement>(
         (kotlin.browser.document.getElementsByTagName("head").asList().firstOrNull()
-            ?: kotlin.browser.document.createElement("head")) as HTMLHeadElement
+            ?: kotlin.browser.document.createElement("head").also {
+                document.documentElement?.appendChild(it)
+            }) as HTMLHeadElement
     ),
     IMetaHost<Head> {
     operator fun invoke(builder: Head.() -> Unit) = apply(builder)
-
-    init {
-        //kotlin.browser.document.documentElement?.appendChild(this.underlying)
-    }
 }

@@ -119,7 +119,7 @@ interface ElementHost<S : ElementHost<S>> {
     infix fun <T, E : AnyElement> T.bind(
         builder: S.(T) -> E
     ): Binding<T, E> {
-        return this.bind(true, builder = builder)
+        return bind(true, builder = builder)
     }
 }
 
@@ -135,7 +135,6 @@ open class W3ElementWrapper<S : W3ElementWrapper<S, U>, U : org.w3c.dom.Element>
     ElementHost<S> {
 
     override fun addChild(child: Element<*, *>) {
-        console.log("Adding ", child.underlying, " to ", this.underlying)
         underlying.appendChild(child.underlying)
         _children.add(child)
         child.onAdded(this)
