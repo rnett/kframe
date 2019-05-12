@@ -40,7 +40,9 @@ class Page(
         return result
     }
 
+    @KframeDSL
     val head get() = Head()
+    @KframeDSL
     val body get() = Body()
 
 }

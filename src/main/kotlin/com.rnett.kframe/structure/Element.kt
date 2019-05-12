@@ -11,6 +11,15 @@ import kotlin.random.Random
 import kotlin.reflect.KProperty0
 
 @DslMarker
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.TYPEALIAS,
+    AnnotationTarget.TYPE,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY
+)
+@Retention(AnnotationRetention.BINARY)
 annotation class KframeDSL
 
 interface ElementHost<S : ElementHost<S>> {

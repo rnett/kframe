@@ -90,6 +90,17 @@ object UrlResolver {
     }
 
     fun tryRest(urlParts: List<String>, routeParts: List<RoutePart>, tailParams: Set<String>): Map<String, String>? {
+
+        if (urlParts.isEmpty()) {
+            return if (routeParts.isEmpty() || routeParts.all { it is RoutePart.Parameter && it.optional })
+                mapOf()
+            else
+                null
+        }
+
+        if (routeParts.isEmpty())
+            return null
+
         val url = urlParts[0]
         val route = routeParts[0]
 
