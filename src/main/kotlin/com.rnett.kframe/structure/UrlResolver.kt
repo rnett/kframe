@@ -100,8 +100,6 @@ object UrlResolver {
         if (routeParts.isEmpty())
             return null
 
-        println("Hi!  Empty${urlParts.isEmpty() || routeParts.isEmpty()}")
-
         val url = urlParts[0]
         val route = routeParts[0]
 

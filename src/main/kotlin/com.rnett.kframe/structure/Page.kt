@@ -54,6 +54,11 @@ class Body internal constructor() :
     ),
     IDisplayHost<Body> {
     operator fun invoke(builder: Body.() -> Unit) = apply(builder)
+
+    init {
+        //kotlin.browser.document.documentElement?.appendChild(this.underlying)
+    }
+
 }
 
 class Head internal constructor() :
@@ -63,4 +68,8 @@ class Head internal constructor() :
     ),
     IMetaHost<Head> {
     operator fun invoke(builder: Head.() -> Unit) = apply(builder)
+
+    init {
+        //kotlin.browser.document.documentElement?.appendChild(this.underlying)
+    }
 }
