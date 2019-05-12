@@ -1,6 +1,7 @@
 package com.rnett.kframe.structure
 
 import com.rnett.kframe.dom.title
+import com.rnett.kframe.structure.Document.url
 import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLHeadElement
 import org.w3c.dom.asList
@@ -9,7 +10,7 @@ data class Parameters(val params: Map<String, String>) : Map<String, String> by 
 
 class Page(
     val name: String,
-    val url: String,
+    val route: Route,
     val getTitle: (Parameters) -> String,
     val builder: Page.(Parameters) -> Unit
 ) {
@@ -28,7 +29,7 @@ class Page(
         other as Page
 
         if (name != other.name) return false
-        if (url != other.url) return false
+        if (route != other.route) return false
 
         return true
     }
