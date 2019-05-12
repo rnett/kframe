@@ -27,8 +27,7 @@ interface ElementHost<S : ElementHost<S>> {
     fun addText(text: String): TextElement
 
     operator fun <T : AnyElement> T.unaryPlus(): T {
-        println("Adding child")
-        addChild(this)
+        this@ElementHost.addChild(this)
 
         if (this is IDataElement)
             Document.addDataElement(this)
@@ -136,7 +135,6 @@ open class W3ElementWrapper<S : W3ElementWrapper<S, U>, U : org.w3c.dom.Element>
     ElementHost<S> {
 
     override fun addChild(child: Element<*, *>) {
-        console.log("Adding a child to", this, " Child:", child, child.underlying)
         underlying.appendChild(child.underlying)
         _children.add(child)
         child.onAdded(this)
