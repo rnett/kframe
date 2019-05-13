@@ -18,7 +18,7 @@ class Page(
 
     fun mount() {
         body.underlying.innerHTML = ""
-        head.underlying.innerHTML = ""
+        //head.underlying.innerHTML = ""
         builder(Document.parameters)
         head.title(getTitle(Document.parameters))
     }
