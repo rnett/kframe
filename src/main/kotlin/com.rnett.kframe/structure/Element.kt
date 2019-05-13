@@ -7,6 +7,7 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.Text
 import org.w3c.dom.events.Event
 import org.w3c.dom.get
+import kotlin.browser.document
 import kotlin.random.Random
 import kotlin.reflect.KProperty0
 
@@ -208,6 +209,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
     override val children: List<Element<*, *>> = _children
 
     override fun addChild(child: Element<*, *>) {
+        underlying.appendChild(child.underlying)
         _children.add(child)
         child.onAdded(this)
     }
@@ -246,8 +248,9 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
     }
 
     override fun addText(text: String): TextElement {
-        val t = kotlin.browser.document.createTextNode(text)
+        val t = document.createTextNode(text)
         underlying.appendChild(t)
+        console.log("Added text to", underlying)
         return TextElement(t)
     }
 
@@ -324,6 +327,8 @@ abstract class DisplayElement<U : HTMLElement, S : DisplayElement<U, S>>(tag: St
     IDisplayHost<S>
 
 abstract class MetaElement<U : HTMLElement, S : MetaElement<U, S>>(tag: String) : Element<U, S>(tag), IMetaHost<S>
+
+//TODO easy dynamic text
 
 class TextElement(private var _underlying: Text) {
     var value: String
