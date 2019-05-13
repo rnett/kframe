@@ -50,13 +50,23 @@ class Page(
 
 class Body internal constructor() :
     W3ElementWrapper<Body, HTMLBodyElement>(
-        (
-                document.getElementsByTagName("body").asList().firstOrNull()
-                    ?: document.body
-                    ?: kotlin.browser.document.createElement("body").also {
-                        document.documentElement?.appendChild(it)
-                    }
-                ) as HTMLBodyElement
+        run {
+            var body = document.getElementsByTagName("body").asList().firstOrNull()
+
+            if (body == null) {
+                body = document.body
+            } else
+                println("Got body from tag")
+
+            if (body == null) {
+                println("Adding body element")
+                body = document.createElement("body")
+                document.documentElement?.appendChild(body as HTMLBodyElement)
+            } else
+                println("Got body from property")
+
+            body
+        } as HTMLBodyElement
     ),
     IDisplayHost<Body> {
     operator fun invoke(builder: Body.() -> Unit) = apply(builder)

@@ -137,7 +137,7 @@ object Document {
 fun site(builder: Document.() -> Unit) {
     Document.builder()
 
-    var url = window.location.href
+    var url: String
 
     if ("?routerurl=" in window.location.href) {
         url = window.location.href.substringAfter("?routerurl=")
@@ -149,6 +149,7 @@ fun site(builder: Document.() -> Unit) {
         }
     }
 
+    //TODO it is very slow
     if (!Document.gotoUrl(url)) {
         Document.gotoUrl("")
     }
