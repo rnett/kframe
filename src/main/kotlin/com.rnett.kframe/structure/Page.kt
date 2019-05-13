@@ -42,20 +42,21 @@ class Page(
     }
 
     @KframeDSL
-    val head
-        get() = Head()
+    val head by lazy { Head() }
     @KframeDSL
-    val body
-        get() = Body()
+    val body by lazy { Body() }
 
 }
 
 class Body internal constructor() :
     W3ElementWrapper<Body, HTMLBodyElement>(
-        (kotlin.browser.document.getElementsByTagName("body").asList().firstOrNull() as HTMLBodyElement?
-            ?: kotlin.browser.document.createElement("body").also {
-                document.documentElement?.appendChild(it)
-            } as HTMLBodyElement)
+        (
+                document.getElementsByTagName("body").asList().firstOrNull()
+                    ?: document.body
+                    ?: kotlin.browser.document.createElement("body").also {
+                        document.documentElement?.appendChild(it)
+                    }
+                ) as HTMLBodyElement
     ),
     IDisplayHost<Body> {
     operator fun invoke(builder: Body.() -> Unit) = apply(builder)
@@ -63,10 +64,13 @@ class Body internal constructor() :
 
 class Head internal constructor() :
     W3ElementWrapper<Head, HTMLHeadElement>(
-        (kotlin.browser.document.getElementsByTagName("head").asList().firstOrNull()
-            ?: kotlin.browser.document.createElement("head").also {
-                document.documentElement?.appendChild(it)
-            }) as HTMLHeadElement
+        (
+                document.getElementsByTagName("head").asList().firstOrNull()
+                    ?: document.head
+                    ?: document.createElement("head").also {
+                        document.documentElement?.appendChild(it)
+                    }
+                ) as HTMLHeadElement
     ),
     IMetaHost<Head> {
     operator fun invoke(builder: Head.() -> Unit) = apply(builder)
