@@ -168,9 +168,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
 
     val attributes = Attributes(mutableMapOf(), this)
     val style = Style(mutableMapOf(), this)
-    val data = Data(this)
-    val aria = Aria(this)
-    val bootstrap = Bootstrap(this)
+    val classes = Classes(mutableSetOf(), this)
 
     var id by attributes.boxedValue<String>()
 
@@ -188,8 +186,6 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
     }
 
     val idOrRandom get() = id ?: setRandomId()
-
-    val classes = Classes(mutableSetOf(), this)
     var klass
         get() = classes.joinToString(" ")
         set(v) {
@@ -204,6 +200,9 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
 
     var role by attributes.boxedValue<String>()
 
+    val data = Data(this)
+    val aria = Aria(this)
+    val bootstrap = Bootstrap(this)
 
     val _children = mutableListOf<Element<*, *>>()
     override val children: List<Element<*, *>> = _children
