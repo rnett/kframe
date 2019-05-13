@@ -85,6 +85,7 @@ object Document {
     }
 
     private fun findUrl(url: String): Pair<Page, Parameters>? {
+        return pagesByUrl[Route(listOf())]!! to Parameters(mapOf())
         val (route, params) = if (url.startsWith("http")) {
             UrlResolver(url.substringAfter("//").substringAfter('/'), pagesByUrl.keys) ?: return null
         } else

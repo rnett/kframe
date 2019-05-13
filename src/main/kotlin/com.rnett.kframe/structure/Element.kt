@@ -250,7 +250,6 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
     override fun addText(text: String): TextElement {
         val t = document.createTextNode(text)
         underlying.appendChild(t)
-        console.log("Added text to", underlying)
         return TextElement(t)
     }
 
