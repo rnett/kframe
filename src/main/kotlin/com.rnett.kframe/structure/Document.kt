@@ -137,21 +137,23 @@ object Document {
 fun site(builder: Document.() -> Unit) {
     Document.builder()
 
-    var url: String
+    window.onload = {
+        var url: String
 
-    if ("?routerurl=" in window.location.href) {
-        url = window.location.href.substringAfter("?routerurl=")
-    } else {
-        url = window.location.pathname
+        if ("?routerurl=" in window.location.href) {
+            url = window.location.href.substringAfter("?routerurl=")
+        } else {
+            url = window.location.pathname
 
-        if ('?' in window.location.href) {
-            url += "?" + window.location.href.substringAfter('?')
+            if ('?' in window.location.href) {
+                url += "?" + window.location.href.substringAfter('?')
+            }
         }
-    }
 
-    //TODO it is very slow
-    if (!Document.gotoUrl(url)) {
-        Document.gotoUrl("")
+        //TODO it is very slow
+        if (!Document.gotoUrl(url)) {
+            Document.gotoUrl("")
+        }
     }
 }
 

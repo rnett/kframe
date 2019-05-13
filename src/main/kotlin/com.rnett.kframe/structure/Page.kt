@@ -16,8 +16,13 @@ class Page(
     val builder: Page.(Parameters) -> Unit
 ) {
 
+    @KframeDSL
+    val head by lazy { Head() }
+    @KframeDSL
+    val body by lazy { Body() }
+
     fun mount() {
-        body.underlying.innerHTML = ""
+        //body.underlying.innerHTML = ""
         head.children.forEach {
             it.remove()
         }
@@ -44,16 +49,20 @@ class Page(
         return result
     }
 
-    @KframeDSL
-    val head by lazy { Head() }
-    @KframeDSL
-    val body by lazy { Body() }
-
 }
 
 class Body internal constructor() :
     W3ElementWrapper<Body, HTMLBodyElement>(
         run {
+
+            document.documentElement!!.children.asList().forEach {
+                console.log(it)
+            }
+
+            document.getElementsByTagName("body").asList().forEach {
+                console.log(it)
+            }
+
             var body = document.getElementsByTagName("body").asList().firstOrNull()
 
             if (body == null) {
