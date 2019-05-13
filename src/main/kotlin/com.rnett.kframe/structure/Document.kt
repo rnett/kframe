@@ -135,9 +135,9 @@ object Document {
 
 @KframeDSL
 fun site(builder: Document.() -> Unit) {
-    Document.builder()
-
     window.onload = {
+        Document.builder()
+
         var url: String
 
         if ("?routerurl=" in window.location.href) {

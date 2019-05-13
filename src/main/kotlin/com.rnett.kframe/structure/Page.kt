@@ -54,7 +54,7 @@ class Page(
 class Body internal constructor() :
     W3ElementWrapper<Body, HTMLBodyElement>(
         run {
-
+            console.log("Loading body")
             document.documentElement!!.children.asList().forEach {
                 console.log(it)
             }
