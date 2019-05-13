@@ -167,7 +167,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
         private set
 
     val attributes = Attributes(mutableMapOf(), this)
-    val style = attributes.style
+    val style = Style(mutableMapOf(), this)
     val data = Data(this)
     val aria = Aria(this)
     val bootstrap = Bootstrap(this)
@@ -189,9 +189,9 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
 
     val idOrRandom get() = id ?: setRandomId()
 
-    val classes get() = attributes.classes
+    val classes = Classes(mutableSetOf(), this)
     var klass
-        get() = attributes.classes.raw
+        get() = classes.joinToString(" ")
         set(v) {
             classes.clear()
             classes.addAll(v.split(" "))

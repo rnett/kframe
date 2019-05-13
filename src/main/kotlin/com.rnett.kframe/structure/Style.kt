@@ -4,7 +4,7 @@ import org.w3c.dom.get
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class Style(private val rules: MutableMap<String, Value>, val element: Element<*, *>) : Attributes.Value() {
+class Style(private val rules: MutableMap<String, Value>, val element: Element<*, *>) {
     abstract class Value {
         abstract val raw: String
 
@@ -30,7 +30,7 @@ class Style(private val rules: MutableMap<String, Value>, val element: Element<*
         else
             rules[key] = value
 
-        element.underlying.attributes["style"]?.value = raw
+        element.underlying.attributes["style"]?.value = toRaw()
     }
 
     operator fun set(key: String, value: String) = set(key, Value.Box(value))
@@ -96,7 +96,6 @@ class Style(private val rules: MutableMap<String, Value>, val element: Element<*
     val stringValue get() = boxedValue<String>()
 
     fun toRaw(): String = rules.entries.joinToString(";") { "${it.key}: ${it.value}" }
-    override val raw get() = toRaw()
 
     operator fun invoke(builder: Style.() -> Unit) = builder()
 
