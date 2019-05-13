@@ -30,7 +30,7 @@ data class Route(val parts: List<RoutePart>) {
 
     companion object {
         operator fun invoke(route: String): Route {
-            val segments = route.split("/")
+            val segments = route.split("/").filter { it.isNotBlank() }
 
             val parts = mutableListOf<RoutePart>()
 
@@ -81,7 +81,7 @@ object UrlResolver {
         } else
             emptyMap()
 
-        val parts = url.substringBeforeLast('?').split("/")
+        val parts = url.substringBeforeLast('?').split("/").filter { it.isNotBlank() }
 
         val readParams = tryRest(parts, route.parts, urlParams.keys) ?: return null
 
