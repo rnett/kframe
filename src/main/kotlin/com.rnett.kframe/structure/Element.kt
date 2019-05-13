@@ -167,7 +167,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
         private set
 
     val attributes = Attributes(mutableMapOf(), this)
-    val style = Style(mutableMapOf(), this)
+    val style by lazy { Style(mutableMapOf(), this) }
     val classes = Classes(mutableSetOf(), this)
 
     var id by attributes.boxedValue<String>()
@@ -200,9 +200,9 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
 
     var role by attributes.boxedValue<String>()
 
-    val data = Data(this)
-    val aria = Aria(this)
-    val bootstrap = Bootstrap(this)
+    val data by lazy { Data(this) }
+    val aria by lazy { Aria(this) }
+    val bootstrap by lazy { Bootstrap(this) }
 
     val _children = mutableListOf<Element<*, *>>()
     override val children: List<Element<*, *>> = _children
