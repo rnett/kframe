@@ -30,7 +30,6 @@ class Page(
         body.children.forEach {
             it.remove()
         }
-        println("Mounting $name")
         builder(Document.parameters)
         head.title(getTitle(Document.parameters))
     }

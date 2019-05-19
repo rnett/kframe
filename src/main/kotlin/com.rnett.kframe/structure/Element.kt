@@ -290,7 +290,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
 
     inline operator fun invoke(klass: String = "", id: String = "", builder: Builder<in S> = {}): S {
         if (klass.isNotBlank())
-            this.classes += klass
+            classes += klass
 
         if (id.isNotBlank())
             this.id = id
