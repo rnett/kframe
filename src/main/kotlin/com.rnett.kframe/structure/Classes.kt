@@ -92,7 +92,7 @@ class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Ele
         optionalClassDelegate(initialValue, { it.klass })
 
     operator fun plusAssign(klass: String) {
-        classes += klass
+        add(klass)
     }
 
     override fun equals(other: Any?): Boolean {
