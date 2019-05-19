@@ -120,3 +120,19 @@ inline fun DisplayHost.p(
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
     return +BasicDisplayElement<HTMLParagraphElement>("p")(klass, id, builder)
 }
+
+@KframeDSL
+inline fun DisplayHost.br(
+    klass: String = "", id: String = "",
+    builder: BasicDisplayBuilder<HTMLBRElement> = {}
+): BasicDisplayElement<HTMLBRElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicDisplayElement<HTMLBRElement>("br")(klass, id, builder)
+}
+
+@KframeDSL
+val DisplayHost.br
+    get() = br()
+
+@KframeDSL
+fun DisplayHost.br(times: Int) = repeat(times) { br }

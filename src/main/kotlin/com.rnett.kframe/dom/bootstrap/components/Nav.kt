@@ -47,6 +47,29 @@ class NavLink : ClassElement<HTMLAnchorElement, NavLink>("a", "nav-link") {
     var disabled by classes.presentDelegate
     var active by classes.presentDelegate
     var href by attributes.boxedValue<String>()
+
+    private var _followLink = true
+    var followLink
+        get() = _followLink
+        set(v) {
+            if (v == _followLink)
+                return
+
+            if (v)
+                attributes.remove("onclick")
+            else
+                attributes["onclick"] = "return false;"
+
+            _followLink = v
+        }
+
+    fun makeClickable() {
+        if (href.isNullOrBlank()) {
+            href = "#"
+            followLink = false
+        }
+    }
+
 }
 
 @KframeDSL
