@@ -105,7 +105,9 @@ inline fun Navbar.routerLink(
             Document.gotoUrl(url)
         }
         +title
-        active = Document.page == Document.findUrl(url)?.first
+        onPageChange {
+            active = Document.page == Document.findUrl(url)?.first
+        }
         makeClickable()
     }
 }
@@ -124,7 +126,9 @@ inline fun Navbar.routerLink(
             Document.goto(page, url, parameters)
         }
         +title
-        active = Document.page == page
+        onPageChange {
+            active = Document.page == page
+        }
         makeClickable()
     }
 }
