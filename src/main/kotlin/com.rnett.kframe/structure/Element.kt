@@ -122,6 +122,9 @@ interface ElementHost<S : ElementHost<S>> {
     ): Binding<T, E> {
         return bind(true, builder = builder)
     }
+
+    operator fun Page.invoke(builder: S.() -> Unit) = (this@ElementHost as S).withPage(this, builder)
+
 }
 
 typealias AnyElementHost = ElementHost<*>
@@ -135,10 +138,15 @@ typealias MetaHost = IMetaHost<*>
 open class W3ElementWrapper<S : W3ElementWrapper<S, U>, U : org.w3c.dom.Element>(val underlying: U) :
     ElementHost<S> {
 
+    internal var addSubscriber: ((AnyElement) -> Unit)? = null
+
     override fun addChild(child: Element<*, *>) {
         underlying.appendChild(child.underlying)
         _children.add(child)
         child.onAdded(this)
+
+        if (addSubscriber != null)
+            addSubscriber!!(child)
     }
 
     override fun addText(text: String): TextElement {
@@ -208,10 +216,15 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
     val _children = mutableListOf<Element<*, *>>()
     override val children: List<Element<*, *>> = _children
 
+    internal var addSubscriber: ((AnyElement) -> Unit)? = null
+
     override fun addChild(child: Element<*, *>) {
         underlying.appendChild(child.underlying)
         _children.add(child)
         child.onAdded(this)
+
+        if (addSubscriber != null)
+            addSubscriber!!(child)
     }
 
     private var _parent: ElementHost<*>? = null
@@ -346,3 +359,15 @@ class BasicMetaElement<U : HTMLElement>(tag: String) : DisplayElement<U, BasicMe
 
 typealias BasicDisplayBuilder<U> = BasicDisplayElement<U>.() -> Unit
 typealias BasicMetaBuilder<U> = BasicMetaElement<U>.() -> Unit
+
+var ElementHost<*>.addSubscriber: ((AnyElement) -> Unit)?
+    get() = if (this is AnyElement)
+        this.addSubscriber
+    else
+        (this as W3ElementWrapper<*, *>).addSubscriber
+    set(v) {
+        if (this is AnyElement)
+            this.addSubscriber = v
+        else
+            (this as W3ElementWrapper<*, *>).addSubscriber = v
+    }

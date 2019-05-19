@@ -27,7 +27,6 @@ class Navbar : ClassElement<HTMLElement, Navbar>("nav", "navbar") {
 
     val nav: Nav
     val body = div("collapse navbar-collapse") {
-        classes += "collapse navbar-collapse"
         nav = nav()
         nav.classes.remove("nav")
         nav.classes.add("navbar-nav")

@@ -5,6 +5,44 @@ import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLHeadElement
 import org.w3c.dom.asList
 import kotlin.browser.document
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+class PageMount<S : ElementHost<S>>(val parent: S, val page: Page, val builder: S.() -> Unit) {
+
+    private val elements = mutableListOf<AnyElement>()
+
+    fun clear() {
+        elements.forEach { it.remove() }
+        elements.clear()
+    }
+
+    fun mount() {
+        if (Document.page == page) {
+            parent.addSubscriber = {
+                elements.add(it)
+            }
+            parent.builder()
+            parent.addSubscriber = null
+        } else
+            elements.clear()
+    }
+
+    fun update() {
+        if (Document.page == page)
+            mount()
+        else
+            clear()
+    }
+}
+
+internal fun <E : ElementHost<E>> E.withPage(page: Page, builder: E.() -> Unit): PageMount<E> {
+    contract { callsInPlace(builder, InvocationKind.AT_MOST_ONCE) }
+
+    val pm = PageMount(this, page, builder)
+    Document.addPageMount(pm)
+    return pm
+}
 
 data class Parameters(val params: Map<String, String>) : Map<String, String> by params
 
