@@ -7,16 +7,22 @@ import kotlin.reflect.KProperty
 class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Element<*, *>) :
     MutableSet<String> by classes {
 
-    override fun add(element: String) =
-        if (" " in element)
-            addAll(element.split(" ").filter { it.isNotBlank() })
+    override fun add(element: String): Boolean {
+        val klass = element.trim()
+        return if (" " in klass)
+            addAll(klass.split(" ").filter { it.isNotBlank() })
         else {
-            if (classes.add(element)) {
-                this.element.underlying.classList.add(element)
+            if (classes.add(klass)) {
+                this.element.underlying.classList.add(klass)
                 true
             } else
                 false
         }
+    }
+
+    override fun addAll(elements: Collection<String>): Boolean {
+        return elements.all { add(it) }
+    }
 
     override fun clear() {
         classes.clear()
