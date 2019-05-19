@@ -10,7 +10,7 @@ import kotlin.contracts.contract
 
 class PageMount<S : ElementHost<S>>(val parent: S, val page: Page, val builder: S.() -> Unit) {
 
-    private val elements = mutableListOf<AnyElement>()
+    private val elements = mutableListOf<Removable>()
 
     fun clear() {
         elements.forEach { it.remove() }

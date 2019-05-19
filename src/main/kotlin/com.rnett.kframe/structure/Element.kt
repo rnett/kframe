@@ -23,6 +23,10 @@ import kotlin.reflect.KProperty0
 @Retention(AnnotationRetention.BINARY)
 annotation class KframeDSL
 
+interface Removable {
+    fun remove()
+}
+
 interface ElementHost<S : ElementHost<S>> {
     fun addChild(child: Element<*, *>)
     fun addText(text: String): TextElement
@@ -138,7 +142,7 @@ typealias MetaHost = IMetaHost<*>
 open class W3ElementWrapper<S : W3ElementWrapper<S, U>, U : org.w3c.dom.Element>(val underlying: U) :
     ElementHost<S> {
 
-    internal var addSubscriber: ((AnyElement) -> Unit)? = null
+    internal var addSubscriber: ((Removable) -> Unit)? = null
 
     override fun addChild(child: Element<*, *>) {
         underlying.appendChild(child.underlying)
@@ -152,7 +156,12 @@ open class W3ElementWrapper<S : W3ElementWrapper<S, U>, U : org.w3c.dom.Element>
     override fun addText(text: String): TextElement {
         val t = kotlin.browser.document.createTextNode(text)
         underlying.appendChild(t)
-        return TextElement(t)
+
+        val te = TextElement(t)
+        if (addSubscriber != null)
+            addSubscriber!!(te)
+
+        return te
     }
 
     private val _children = mutableListOf<AnyElement>()
@@ -167,7 +176,7 @@ typealias AnyElement = Element<*, *>
 private val usedIds = mutableSetOf<String>()
 private val idRandom = Random(1)
 
-abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : ElementHost<S> {
+abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : ElementHost<S>, Removable {
 
     var tag: String = tag
         private set
@@ -216,7 +225,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
     val _children = mutableListOf<Element<*, *>>()
     override val children: List<Element<*, *>> = _children
 
-    internal var addSubscriber: ((AnyElement) -> Unit)? = null
+    internal var addSubscriber: ((Removable) -> Unit)? = null
 
     override fun addChild(child: Element<*, *>) {
         underlying.appendChild(child.underlying)
@@ -234,7 +243,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
         this._parent = parent
     }
 
-    fun remove() {
+    override fun remove() {
         underlying.remove()
     }
 
@@ -263,7 +272,12 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
     override fun addText(text: String): TextElement {
         val t = document.createTextNode(text)
         underlying.appendChild(t)
-        return TextElement(t)
+
+        val te = TextElement(t)
+        if (addSubscriber != null)
+            addSubscriber!!(te)
+
+        return te
     }
 
     val on by lazy { Events(this as S) }
@@ -342,7 +356,7 @@ abstract class MetaElement<U : HTMLElement, S : MetaElement<U, S>>(tag: String) 
 
 //TODO easy dynamic text
 
-class TextElement(private var _underlying: Text) {
+class TextElement(private var _underlying: Text) : Removable {
     var value: String
         get() = _underlying.wholeText
         set(v) {
@@ -352,6 +366,10 @@ class TextElement(private var _underlying: Text) {
         }
 
     val underlying get() = _underlying
+
+    override fun remove() {
+        underlying.remove()
+    }
 }
 
 class BasicDisplayElement<U : HTMLElement>(tag: String) : DisplayElement<U, BasicDisplayElement<U>>(tag)
@@ -360,7 +378,7 @@ class BasicMetaElement<U : HTMLElement>(tag: String) : DisplayElement<U, BasicMe
 typealias BasicDisplayBuilder<U> = BasicDisplayElement<U>.() -> Unit
 typealias BasicMetaBuilder<U> = BasicMetaElement<U>.() -> Unit
 
-var ElementHost<*>.addSubscriber: ((AnyElement) -> Unit)?
+var ElementHost<*>.addSubscriber: ((Removable) -> Unit)?
     get() = if (this is AnyElement)
         this.addSubscriber
     else
