@@ -97,7 +97,7 @@ object Document {
         builder()
     }
 
-    private fun findUrl(url: String): Pair<Page, Parameters>? {
+    fun findUrl(url: String): Pair<Page, Parameters>? {
 
         if (pagesByName.isEmpty()) {
             loadPages = false
