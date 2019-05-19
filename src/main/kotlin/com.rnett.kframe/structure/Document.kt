@@ -1,16 +1,17 @@
 package com.rnett.kframe.structure
 
 import com.rnett.kframe.dom.input.IDataElement
+import com.rnett.kframe.dom.title
 import com.rnett.kframe.structure.data.Binding
 import kotlin.browser.window
-
-internal data class SubpageInstance(val page: Page, val loadedUrl: String, val data: Parameters) {
-    fun build() = page.mount()
-    fun urlString() = loadedUrl
-}
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @JsName("KframeDocument")
 object Document {
+
+    internal lateinit var builder: Document.() -> Unit
+
     var _url: String = ""
     var _parameters: Parameters = Parameters(mapOf())
 
@@ -24,7 +25,7 @@ object Document {
     private val pagesByUrl: MutableMap<Route, Page> = mutableMapOf()
     private val pagesByName: MutableMap<String, Page> = mutableMapOf()
 
-    fun addPage(page: Page) {
+    internal fun addPage(page: Page): Page {
         if (page.route in pagesByUrl)
             throw IllegalArgumentException("Page with url ${page.route} already registered")
 
@@ -33,9 +34,12 @@ object Document {
 
         pagesByUrl[page.route] = page
         pagesByName[page.name] = page
+
+        return page
     }
 
-    private var currentPage: SubpageInstance? = null
+    private lateinit var _page: Page
+    val page get() = _page
 
     private val preEventSubscribers = mutableSetOf<() -> Unit>()
     private val postEventSubscribers = mutableSetOf<() -> Unit>()
@@ -77,14 +81,30 @@ object Document {
     fun goto(page: String, loadedUrl: String, vararg data: Pair<String, Any>) = goto(page, loadedUrl, data.toMap())
 
     fun goto(subpage: Page, loadedUrl: String, data: Parameters) {
-        val si = SubpageInstance(subpage, loadedUrl, data)
-        window.history.pushState(null, subpage.getTitle(data), si.urlString())
+        window.history.pushState(null, subpage.getTitle(data), loadedUrl)
         _parameters = data
-        currentPage = si
-        currentPage!!.build()
+        _url = loadedUrl
+        _page = subpage
+
+        head.children.forEach {
+            it.remove()
+        }
+        body.children.forEach {
+            it.remove()
+        }
+        head.title(subpage.getTitle(data))
+
+        builder()
     }
 
     private fun findUrl(url: String): Pair<Page, Parameters>? {
+
+        if (pagesByName.isEmpty()) {
+            loadPages = false
+            builder()
+            loadPages = true
+        }
+
         val (route, params) = if (url.startsWith("http")) {
             UrlResolver(url.substringAfter("//").substringAfter('/'), pagesByUrl.keys) ?: return null
         } else
@@ -100,25 +120,6 @@ object Document {
         return true
     }
 
-    @KframeDSL
-    fun page(name: String, route: Route, title: String, builder: Page.(Parameters) -> Unit) {
-        addPage(Page(name, route, { title }, builder))
-    }
-
-    @KframeDSL
-    fun page(name: String, route: Route, title: (Parameters) -> String, builder: Page.(Parameters) -> Unit) {
-        addPage(Page(name, route, title, builder))
-    }
-
-    @KframeDSL
-    fun page(name: String, url: String, title: String, builder: Page.(Parameters) -> Unit) {
-        page(name, Route(url), title, builder)
-    }
-
-    @KframeDSL
-    fun page(name: String, url: String, title: (Parameters) -> String, builder: Page.(Parameters) -> Unit) {
-        page(name, Route(url), title, builder)
-    }
 
     private val bindings = mutableListOf<Binding<*, *>>()
 
@@ -131,13 +132,58 @@ object Document {
     fun addDataElement(element: IDataElement) {
         dataElements.add(element)
     }
+
+    private var loadPages = true
+
+    @KframeDSL
+    fun withPage(page: Page, builder: () -> Unit) {
+        if (this.page == page && loadPages)
+            builder()
+    }
+
+    @KframeDSL
+    val head by lazy { Head() }
+    @KframeDSL
+    val body by lazy { Body() }
+}
+
+
+@KframeDSL
+fun definePage(name: String, route: Route, title: String) =
+    Document.addPage(Page(name, route, { title }))
+
+
+@KframeDSL
+fun definePage(name: String, route: Route, title: (Parameters) -> String) =
+    Document.addPage(Page(name, route, title))
+
+
+@KframeDSL
+fun definePage(name: String, url: String, title: String) =
+    definePage(name, Route(url), title)
+
+
+@KframeDSL
+fun definePage(name: String, url: String, title: (Parameters) -> String) =
+    definePage(name, Route(url), title)
+
+@KframeDSL
+operator fun Page.invoke(builder: () -> Unit) {
+    //TODO use contract
+    //contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    Document.withPage(this, builder)
+}
+
+@KframeDSL
+fun withPage(page: Page, builder: () -> Unit) {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    Document.withPage(page, builder)
 }
 
 @KframeDSL
 fun site(builder: Document.() -> Unit) {
     window.onload = {
-        Document.builder()
-
+        Document.builder = builder
         var url: String
 
         if ("?routerurl=" in window.location.href) {

@@ -1,6 +1,5 @@
 package com.rnett.kframe.structure
 
-import com.rnett.kframe.dom.title
 import com.rnett.kframe.structure.Document.url
 import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLHeadElement
@@ -12,27 +11,8 @@ data class Parameters(val params: Map<String, String>) : Map<String, String> by 
 class Page(
     val name: String,
     val route: Route,
-    val getTitle: (Parameters) -> String,
-    val builder: Page.(Parameters) -> Unit
+    val getTitle: (Parameters) -> String
 ) {
-
-    @KframeDSL
-    val head by lazy { Head() }
-    @KframeDSL
-    val body by lazy { Body() }
-
-    fun mount() {
-//        body.underlying.innerHTML = ""
-//        head.underlying.innerHTML = ""
-        head.children.forEach {
-            it.remove()
-        }
-        body.children.forEach {
-            it.remove()
-        }
-        builder(Document.parameters)
-        head.title(getTitle(Document.parameters))
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
