@@ -26,6 +26,9 @@ class Page(
         head.children.forEach {
             it.remove()
         }
+        body.children.forEach {
+            it.remove()
+        }
         //head.underlying.innerHTML = ""
         builder(Document.parameters)
         head.title(getTitle(Document.parameters))
