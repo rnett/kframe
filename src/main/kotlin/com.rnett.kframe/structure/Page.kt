@@ -22,14 +22,14 @@ class Page(
     val body by lazy { Body() }
 
     fun mount() {
-//        body.underlying.innerHTML = ""
-//        head.underlying.innerHTML = ""
-        head.children.forEach {
-            it.remove()
-        }
-        body.children.forEach {
-            it.remove()
-        }
+        body.underlying.innerHTML = ""
+        head.underlying.innerHTML = ""
+//        head.children.forEach {
+//            it.remove()
+//        }
+//        body.children.forEach {
+//            it.remove()
+//        }
         println("Mounting $name")
         builder(Document.parameters)
         head.title(getTitle(Document.parameters))

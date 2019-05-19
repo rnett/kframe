@@ -149,7 +149,7 @@ open class W3ElementWrapper<S : W3ElementWrapper<S, U>, U : org.w3c.dom.Element>
 
     private val _children = mutableListOf<AnyElement>()
 
-    override val children: List<AnyElement> = _children
+    override val children: List<AnyElement> get() = _children
 }
 
 typealias Builder<E> = E.() -> Unit
