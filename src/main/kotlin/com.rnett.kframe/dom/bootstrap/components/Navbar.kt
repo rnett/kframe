@@ -1,12 +1,9 @@
 package com.rnett.kframe.dom.bootstrap.components
 
-import com.rnett.kframe.dom.AElement
-import com.rnett.kframe.dom.a
+import com.rnett.kframe.dom.*
 import com.rnett.kframe.dom.bootstrap.Breakpoint
 import com.rnett.kframe.dom.bootstrap.ContextType
 import com.rnett.kframe.dom.bootstrap.core.ClassElement
-import com.rnett.kframe.dom.div
-import com.rnett.kframe.dom.span
 import com.rnett.kframe.structure.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLSpanElement
@@ -33,6 +30,15 @@ class Navbar : ClassElement<HTMLElement, Navbar>("nav", "navbar") {
         nav = nav()
         nav.classes.remove("nav")
         nav.classes.add("navbar-nav")
+    }
+
+    val toggle = rawButton("navbar-toggler") {
+        data.toggle = "collapse"
+        data.target = body.idOrRandom
+        aria.controls = body.id
+        aria.expanded = false
+        aria.label = "Toggle navigation"
+        span("navbar-toggler-icon")
     }
 
     init {
