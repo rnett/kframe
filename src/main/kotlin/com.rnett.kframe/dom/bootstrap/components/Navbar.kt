@@ -26,7 +26,7 @@ class Navbar : ClassElement<HTMLElement, Navbar>("nav", "navbar") {
         }
     }
 
-    val theme by classes.optionalClassDelegate<Theme> { "navbar-${it.name.toLowerCase()}" }
+    var theme by classes.optionalClassDelegate<Theme> { "navbar-${it.name.toLowerCase()}" }
 
     val nav: Nav
     val body = div("collapse navbar-collapse") {
