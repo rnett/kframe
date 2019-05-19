@@ -95,6 +95,38 @@ inline fun Navbar.linkItem(
 }
 
 @KframeDSL
+inline fun Navbar.routerLink(
+    title: String,
+    url: String,
+    crossinline builder: Builder<NavLink> = {}
+): NavLink {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return linkItem("") {
+        on.click {
+            Document.gotoUrl(url)
+        }
+        +title
+    }
+}
+
+@KframeDSL
+inline fun Navbar.routerLink(
+    page: Page,
+    url: String = "/${page.name.toLowerCase()}",
+    parameters: Parameters = Parameters(mapOf()),
+    title: String = page.name,
+    crossinline builder: Builder<NavLink> = {}
+): NavLink {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return linkItem("") {
+        on.click {
+            Document.goto(page, url, parameters)
+        }
+        +title
+    }
+}
+
+@KframeDSL
 inline fun Navbar.dropdownItem(
     buttonType: ContextType? = null,
     klass: String, id: String,
