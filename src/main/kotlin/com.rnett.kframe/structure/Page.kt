@@ -8,6 +8,8 @@ import kotlin.browser.document
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+//TODO option on page mount method to reload whole document instead of mount points
+
 class PageMount<S : ElementHost<S>>(val parent: S, val page: Page, val builder: S.() -> Unit) {
 
     private val elements = mutableListOf<Removable>()
@@ -20,6 +22,7 @@ class PageMount<S : ElementHost<S>>(val parent: S, val page: Page, val builder: 
     fun mount() {
         if (Document.page == page) {
             parent.addSubscriber = {
+                console.log("Added", it)
                 elements.add(it)
             }
             parent.builder()
