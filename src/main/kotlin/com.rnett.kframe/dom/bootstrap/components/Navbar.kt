@@ -19,9 +19,9 @@ class Navbar : ClassElement<HTMLElement, Navbar>("nav", "navbar") {
         Light, Dark
     }
 
-    val expand by classes.optionalClassDelegate<Breakpoint> {
+    val expand by classes.classDelegate<Breakpoint?>(Breakpoint.None) {
         when (it) {
-            Breakpoint.None -> null
+            Breakpoint.None -> "navbar-expand"
             else -> "navbar-expand-${it.klass}"
         }
     }
@@ -37,7 +37,6 @@ class Navbar : ClassElement<HTMLElement, Navbar>("nav", "navbar") {
 
     init {
         role = "navigation"
-        classes += "navbar-expand"
     }
 }
 
