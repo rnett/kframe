@@ -113,9 +113,18 @@ object Document {
         pageMounts.add(pageMount)
     }
 
+    private val onPageChangeSubscribers = mutableListOf<() -> Unit>()
+
+    fun onPageChange(event: () -> Unit) {
+        onPageChangeSubscribers.add(event)
+    }
+
     internal fun refreshPages() {
         pageMounts.forEach {
             it.update()
+        }
+        onPageChangeSubscribers.forEach {
+            it()
         }
     }
 
@@ -159,6 +168,10 @@ fun definePage(name: String, url: String, title: String) =
 fun definePage(name: String, url: String, title: (Parameters) -> String) =
     definePage(name, Route(url), title)
 
+@KframeDSL
+fun onPageChange(handler: () -> Unit) {
+    Document.onPageChange(handler)
+}
 
 @KframeDSL
 fun site(builder: Document.() -> Unit) {
