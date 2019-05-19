@@ -37,6 +37,7 @@ class Navbar : ClassElement<HTMLElement, Navbar>("nav", "navbar") {
 
     init {
         role = "navigation"
+        classes += "navbar-expand"
     }
 }
 
