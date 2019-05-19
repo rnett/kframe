@@ -30,10 +30,9 @@ class PageMount<S : ElementHost<S>>(val parent: S, val page: Page, val builder: 
     }
 
     fun update() {
+        clear()
         if (Document.page == page)
             mount()
-        else
-            clear()
     }
 }
 
