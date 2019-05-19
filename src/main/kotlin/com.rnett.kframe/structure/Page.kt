@@ -22,13 +22,11 @@ class PageMount<S : ElementHost<S>>(val parent: S, val page: Page, val builder: 
     fun mount() {
         if (Document.page == page) {
             parent.addSubscriber = {
-                console.log("Added", it)
                 elements.add(it)
             }
             parent.builder()
             parent.addSubscriber = null
-        } else
-            elements.clear()
+        }
     }
 
     fun update() {
