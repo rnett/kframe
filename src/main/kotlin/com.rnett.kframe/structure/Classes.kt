@@ -9,7 +9,7 @@ class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Ele
 
     override fun add(element: String) =
         if (" " in element)
-            addAll(element.split(" "))
+            addAll(element.split(" ").filter { it.isNotBlank() })
         else {
             if (classes.add(element)) {
                 this.element.underlying.classList.add(element)
@@ -61,6 +61,11 @@ class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Ele
             this@Classes.add(toClass(value))
             this.value = value
         }
+
+        init {
+            this@Classes.add(toClass(this.value))
+        }
+
     }
 
     fun <T> classDelegate(initialValue: T, toClass: (T) -> String) = ClassDelegate(toClass, initialValue)
