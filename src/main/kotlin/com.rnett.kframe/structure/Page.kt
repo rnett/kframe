@@ -70,6 +70,8 @@ class Page(
         return result
     }
 
+    val active get() = Document.page == this
+
 }
 
 class Body internal constructor() :
