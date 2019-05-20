@@ -55,7 +55,7 @@ interface ElementHost<S : ElementHost<S>> {
     }
 
     @BindingDSL
-    fun <V : View<S, E>, E : AnyElement> V.bind(
+    fun <V : View<S, E>, E : AnyElement> V.bindView(
         watch: Boolean = true,
         equalityCheck: EqualityCheck<*> = EqualityCheck.HashCode
     ): ViewBinding<V, E, S> {
@@ -64,7 +64,7 @@ interface ElementHost<S : ElementHost<S>> {
     }
 
     @BindingDSL
-    fun <V : View<S, E>, E : AnyElement> KProperty0<V>.bind(
+    fun <V : View<S, E>, E : AnyElement> KProperty0<V>.bindViewProperty(
         watch: Boolean = true,
         equalityCheck: EqualityCheck<*> = EqualityCheck.Equality
     ): ViewPropertyBinding<V, E, S> {
@@ -73,16 +73,16 @@ interface ElementHost<S : ElementHost<S>> {
     }
 
     @BindingDSL
-    operator fun <V : View<S, E>, E : AnyElement> V.unaryPlus() = bind(true)
+    operator fun <V : View<S, E>, E : AnyElement> V.unaryPlus() = bindView(true)
 
     @BindingDSL
-    operator fun <V : View<S, E>, E : AnyElement> V.unaryMinus() = bind(false)
+    operator fun <V : View<S, E>, E : AnyElement> V.unaryMinus() = bindView(false)
 
     @BindingDSL
-    operator fun <V : View<S, E>, E : AnyElement> KProperty0<V>.unaryPlus() = bind(true)
+    operator fun <V : View<S, E>, E : AnyElement> KProperty0<V>.unaryPlus() = bindViewProperty(true)
 
     @BindingDSL
-    operator fun <V : View<S, E>, E : AnyElement> KProperty0<V>.unaryMinus() = bind(false)
+    operator fun <V : View<S, E>, E : AnyElement> KProperty0<V>.unaryMinus() = bindViewProperty(false)
 
     @BindingDSL
     fun <T, E : AnyElement> BindingCondition<T>.bind(watch: Boolean = true, builder: S.(T) -> E): Binding<T, E> {
@@ -91,12 +91,7 @@ interface ElementHost<S : ElementHost<S>> {
     }
 
     @BindingDSL
-    infix fun <T, E : AnyElement> BindingCondition<T>.bind(builder: S.(T) -> E): Binding<T, E> {
-        return this.bind(true, builder)
-    }
-
-    @BindingDSL
-    fun <T, E : AnyElement> KProperty0<T>.bind(
+    fun <T, E : AnyElement> KProperty0<T>.bindProperty(
         watch: Boolean = true,
         equalityCheck: EqualityCheck<*> = EqualityCheck.Equality,
         builder: S.(T) -> E
@@ -105,26 +100,12 @@ interface ElementHost<S : ElementHost<S>> {
     }
 
     @BindingDSL
-    infix fun <T, E : AnyElement> KProperty0<T>.bind(
-        builder: S.(T) -> E
-    ): Binding<T, E> {
-        return this.bind(true, builder = builder)
-    }
-
-    @BindingDSL
-    fun <T, E : AnyElement> T.bind(
+    fun <T, E : AnyElement> T.bindValue(
         watch: Boolean = true,
         equalityCheck: EqualityCheck<*> = EqualityCheck.HashCode,
         builder: S.(T) -> E
     ): Binding<T, E> {
         return ValueBindingCondition(this, equalityCheck).bind(watch, builder)
-    }
-
-    @BindingDSL
-    infix fun <T, E : AnyElement> T.bind(
-        builder: S.(T) -> E
-    ): Binding<T, E> {
-        return bind(true, builder = builder)
     }
 
     operator fun Page.invoke(builder: S.() -> Unit) = (this@ElementHost as S).withPage(this, builder)

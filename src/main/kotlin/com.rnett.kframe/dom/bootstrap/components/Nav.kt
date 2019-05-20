@@ -43,7 +43,7 @@ fun Nav.item(
 
 class NavItem : ClassElement<HTMLLIElement, NavItem>("li", "nav-item")
 
-class NavLink : ClassElement<HTMLAnchorElement, NavLink>("a", "nav-link") {
+class NavLink(val item: NavItem) : ClassElement<HTMLAnchorElement, NavLink>("a", "nav-link") {
     var disabled by classes.presentDelegate
     var active by classes.presentDelegate
     var href by attributes.boxedValue<String>()
@@ -79,7 +79,7 @@ inline fun NavItem.link(
     builder: Builder<NavLink> = {}
 ): NavLink {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +NavLink()(klass, id) {
+    return +NavLink(this)(klass, id) {
         if (href.isNotBlank())
             this.href = href
 
