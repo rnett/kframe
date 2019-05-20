@@ -27,6 +27,7 @@ interface Removable {
     fun remove()
 }
 
+//TODO better bndings using onAdd, like pages
 interface ElementHost<S : ElementHost<S>> {
     fun addChild(child: Element<*, *>)
     fun addText(text: String): TextElement

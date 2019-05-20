@@ -15,8 +15,8 @@ sealed class BindingCondition<T> {
 sealed class EqualityCheck<R> {
     abstract fun <T> same(saved: R?, new: T): Pair<Boolean, R>
 
-    object Equality : EqualityCheck<Any>() {
-        override fun <T> same(saved: Any?, new: T) = (saved == new) to new as Any
+    object Equality : EqualityCheck<Any?>() {
+        override fun <T> same(saved: Any?, new: T) = (saved == new) to new as Any?
     }
 
     object HashCode : EqualityCheck<Int>() {
@@ -33,14 +33,13 @@ sealed class EqualityCheck<R> {
         }
     }
 
-    object ReferenceEquality : EqualityCheck<Any>() {
-        override fun <T> same(saved: Any?, new: T) = (saved == new) to new as Any
+    object ReferenceEquality : EqualityCheck<Any?>() {
+        override fun <T> same(saved: Any?, new: T) = (saved == new) to new as Any?
     }
 
-    data class CombinedCheck(val checks: List<EqualityCheck<Any>>) : List<EqualityCheck<Any>> by checks,
-        EqualityCheck<List<Any>>() {
-        override fun <T> same(saved: List<Any>?, new: T): Pair<Boolean, List<Any>> {
-
+    data class CombinedCheck(val checks: List<EqualityCheck<Any?>>) : List<EqualityCheck<Any?>> by checks,
+        EqualityCheck<List<Any?>>() {
+        override fun <T> same(saved: List<Any?>?, new: T): Pair<Boolean, List<Any?>> {
             if (saved == null)
                 return false to checks.map { it.same(null, new).second }
 
@@ -49,11 +48,11 @@ sealed class EqualityCheck<R> {
         }
     }
 
-    operator fun <T : Any> plus(other: EqualityCheck<T>) =
+    operator fun <T> plus(other: EqualityCheck<T>) =
         if (other is CombinedCheck)
-            CombinedCheck(other.checks + (this as EqualityCheck<Any>))
+            CombinedCheck(other.checks + (this as EqualityCheck<Any?>))
         else
-            CombinedCheck(listOf(other as EqualityCheck<Any>, (this as EqualityCheck<Any>)))
+            CombinedCheck(listOf(other as EqualityCheck<Any?>, (this as EqualityCheck<Any?>)))
 }
 
 data class BooleanBindingCondition(val needsUpdate: () -> Boolean) : BindingCondition<Unit>() {
