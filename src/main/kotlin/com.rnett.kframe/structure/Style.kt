@@ -1,9 +1,5 @@
 package com.rnett.kframe.structure
 
-import kotlin.collections.MutableMap
-import kotlin.collections.find
-import kotlin.collections.isNotEmpty
-import kotlin.collections.joinToString
 import kotlin.collections.set
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -103,7 +99,7 @@ class Style(private val rules: MutableMap<String, Value>, val element: Element<*
 
     val stringValue get() = boxedValue<String>()
 
-    fun toRaw(): String = rules.entries.joinToString(";") { "${it.key}: ${it.value}" }
+    fun toRaw(): String = rules.entries.joinToString(";") { "${it.key}: ${it.value.raw}" }
 
     operator fun invoke(builder: Style.() -> Unit) = builder()
 
