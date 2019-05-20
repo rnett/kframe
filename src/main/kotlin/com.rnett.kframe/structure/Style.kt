@@ -1,6 +1,10 @@
 package com.rnett.kframe.structure
 
-import org.w3c.dom.get
+import kotlin.collections.MutableMap
+import kotlin.collections.find
+import kotlin.collections.isNotEmpty
+import kotlin.collections.joinToString
+import kotlin.collections.set
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -30,7 +34,11 @@ class Style(private val rules: MutableMap<String, Value>, val element: Element<*
         else
             rules[key] = value
 
-        element.underlying.attributes["style"]?.value = toRaw()
+        val raw = toRaw()
+        if (raw.isBlank())
+            element.underlying.removeAttribute("style")
+        else
+            element.underlying.setAttribute("style", raw)
     }
 
     operator fun set(key: String, value: String) = set(key, Value.Box(value))

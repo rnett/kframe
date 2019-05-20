@@ -7,6 +7,8 @@ import org.w3c.dom.HTMLAnchorElement
 
 class Bootstrap(val element: Element<*, *>) {
 
+    var float by element.classes.optionalClassDelegate<Float> { it.name.toLowerCase() }
+
     class Flex(val bootstrap: Bootstrap) {
         var justification by bootstrap.element.classes.optionalClassDelegate<Justification>()
         var alignItems by bootstrap.element.classes.optionalClassDelegate<Alignment> { it.itemClass }
