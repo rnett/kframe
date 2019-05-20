@@ -2,10 +2,11 @@ package com.rnett.kframe.structure.data
 
 import com.rnett.kframe.structure.AnyElement
 import com.rnett.kframe.structure.AnyElementHost
+import com.rnett.kframe.structure.Removable
 import com.rnett.kframe.structure.View
 import kotlin.reflect.KProperty0
 
-open class Binding<T, E : AnyElement>(
+open class Binding<T, E : Removable>(
     val buildElement: (T) -> E,
     val condition: BindingCondition<T>,
     currentElement: E? = null

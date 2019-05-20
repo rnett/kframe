@@ -47,7 +47,7 @@ interface ElementHost<S : ElementHost<S>> {
     //TODO check instance of IDataElement for views?
 
     @BindingDSL
-    fun <B : Binding<T, E>, T, E : AnyElement> bind(binding: B, watch: Boolean = true): B {
+    fun <B : Binding<T, E>, T, E : Removable> bind(binding: B, watch: Boolean = true): B {
         if (watch)
             Document.addBinding(binding)
 
@@ -85,13 +85,13 @@ interface ElementHost<S : ElementHost<S>> {
     operator fun <V : View<S, E>, E : AnyElement> KProperty0<V>.unaryMinus() = bindViewProperty(false)
 
     @BindingDSL
-    fun <T, E : AnyElement> BindingCondition<T>.bind(watch: Boolean = true, builder: S.(T) -> E): Binding<T, E> {
+    fun <T, E : Removable> BindingCondition<T>.bind(watch: Boolean = true, builder: S.(T) -> E): Binding<T, E> {
         val binding = Binding({ (this@ElementHost as S).builder(it) }, this)
         return bind(binding)
     }
 
     @BindingDSL
-    fun <T, E : AnyElement> KProperty0<T>.bindProperty(
+    fun <T, E : Removable> KProperty0<T>.bindProperty(
         watch: Boolean = true,
         equalityCheck: EqualityCheck<*> = EqualityCheck.Equality,
         builder: S.(T) -> E
@@ -100,7 +100,7 @@ interface ElementHost<S : ElementHost<S>> {
     }
 
     @BindingDSL
-    fun <T, E : AnyElement> T.bindValue(
+    fun <T, E : Removable> T.bindValue(
         watch: Boolean = true,
         equalityCheck: EqualityCheck<*> = EqualityCheck.HashCode,
         builder: S.(T) -> E
