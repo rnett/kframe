@@ -25,7 +25,7 @@ kotlin {
     target.compilations.all {
         kotlinOptions {
             sourceMap = true
-            moduleKind = "amd"
+            moduleKind = "commonjs"
             metaInfo = true
             //outputFile = "$projectDir/web/"
             noStdlib = true
