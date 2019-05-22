@@ -13,35 +13,12 @@ class Table : TableElement<HTMLTableElement, Table>("table") {
         classes += "table"
     }
 
-    @KframeDSL
-    fun striped() {
-        classes += "table-striped"
-    }
-
-    @KframeDSL
-    fun dark() {
-        classes += "table-dark"
-    }
-
-    @KframeDSL
-    fun bordered() {
-        classes += "table-bordered"
-    }
-
-    @KframeDSL
-    fun borderless() {
-        classes += "table-borderless"
-    }
-
-    @KframeDSL
-    fun hoverable() {
-        classes += "table-hover"
-    }
-
-    @KframeDSL
-    fun small() {
-        classes += "table-sm"
-    }
+    var striped by classes.presentDelegate("table-striped")
+    var dark by classes.presentDelegate("table-dark")
+    var bordered by classes.presentDelegate("table-bordered")
+    var borderless by classes.presentDelegate("table-borderless")
+    var hover by classes.presentDelegate("table-hover")
+    var small by classes.presentDelegate("table-sm")
 
 }
 
@@ -178,5 +155,46 @@ inline fun TableRow.th(
     return th(id) {
         this.scope = scope
         builder()
+    }
+}
+
+@KframeDSL
+inline fun TableHead.header(vararg names: String, builder: TableDataElement.(String) -> Unit) {
+    tr {
+        names.forEach {
+            th {
+                scope = "col"
+                +it
+                builder(it)
+            }
+        }
+    }
+}
+
+@KframeDSL
+inline fun TableBody.row(vararg data: String, builder: TableDataElement.(String) -> Unit) {
+    tr {
+        data.forEach {
+            td {
+                +it
+                builder(it)
+            }
+        }
+    }
+}
+
+@KframeDSL
+inline fun TableBody.namedRow(name: String, vararg data: String, builder: TableDataElement.(String) -> Unit) {
+    tr {
+        th {
+            +name
+            scope = "row"
+        }
+        data.forEach {
+            td {
+                +it
+                builder(it)
+            }
+        }
     }
 }
