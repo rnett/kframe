@@ -159,7 +159,7 @@ inline fun TableRow.th(
 }
 
 @KframeDSL
-inline fun TableHead.header(vararg names: String, builder: TableDataElement.(String) -> Unit) {
+inline fun TableHead.header(vararg names: String, builder: TableDataElement.(String) -> Unit = {}) {
     tr {
         names.forEach {
             th {
@@ -172,7 +172,7 @@ inline fun TableHead.header(vararg names: String, builder: TableDataElement.(Str
 }
 
 @KframeDSL
-inline fun TableBody.row(vararg data: String, builder: TableDataElement.(String) -> Unit) {
+inline fun TableBody.row(vararg data: String, builder: TableDataElement.(String) -> Unit = {}) {
     tr {
         data.forEach {
             td {
@@ -184,7 +184,7 @@ inline fun TableBody.row(vararg data: String, builder: TableDataElement.(String)
 }
 
 @KframeDSL
-inline fun TableBody.namedRow(name: String, vararg data: String, builder: TableDataElement.(String) -> Unit) {
+inline fun TableBody.namedRow(name: String, vararg data: String, builder: TableDataElement.(String) -> Unit = {}) {
     tr {
         th {
             +name
