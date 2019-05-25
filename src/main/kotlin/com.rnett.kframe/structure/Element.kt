@@ -109,6 +109,15 @@ interface ElementHost<S : ElementHost<S>> {
         return ValueBindingCondition(this, equalityCheck).bind(watch, builder)
     }
 
+    @BindingDSL
+    fun <T, E : Removable> (() -> T).bindFunction(
+        watch: Boolean = true,
+        equalityCheck: EqualityCheck<*> = EqualityCheck.HashCode,
+        builder: S.(T) -> E
+    ): Binding<T, E> {
+        return FunctionBindingCondition(this, equalityCheck).bind(watch, builder)
+    }
+
     operator fun Page.invoke(builder: S.() -> Unit) = (this@ElementHost as S).withPage(this, builder)
 
 }
