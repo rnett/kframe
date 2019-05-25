@@ -16,7 +16,7 @@ fun Element<*, *>.hide() {
         return
 
     oldSizes[this] = classes.filter { it.startsWith("d-") }
-    classes.removeAll { it.startsWith("d-") }
+    classes.removeAll(oldSizes[this]!!)
     bootstrap.display(Display.None)
 }
 
