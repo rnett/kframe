@@ -8,7 +8,7 @@ import org.w3c.dom.HTMLElement
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class Icon(val icon: String) : ClassElement<HTMLElement, Icon>("i", "material-icon") {
+class Icon(val icon: String) : ClassElement<HTMLElement, Icon>("i", "material-icons") {
     init {
         +icon
     }
