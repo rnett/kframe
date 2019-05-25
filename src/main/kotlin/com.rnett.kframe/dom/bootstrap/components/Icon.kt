@@ -1,28 +1,25 @@
 package com.rnett.kframe.dom.bootstrap.components
 
+import com.rnett.kframe.dom.bootstrap.core.ClassElement
 import com.rnett.kframe.structure.Builder
-import com.rnett.kframe.structure.DisplayElement
 import com.rnett.kframe.structure.DisplayHost
 import com.rnett.kframe.structure.KframeDSL
-import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLElement
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class FormGroup : DisplayElement<HTMLDivElement, FormGroup>("div") {
-
+class Icon(val icon: String) : ClassElement<HTMLElement, Icon>("i", "material-icon") {
     init {
-        classes += "form-group"
-        classes += "bmd-form-group"
+        +icon
     }
 }
 
 @KframeDSL
-inline fun DisplayHost.formGroup(
+inline fun DisplayHost.icon(
+    icon: String,
     klass: String = "", id: String = "",
-    builder: Builder<FormGroup> = {}
-): FormGroup {
+    builder: Builder<Icon> = {}
+): Icon {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
-    return +FormGroup()(klass, id, builder)
+    return +Icon(icon)(klass, id, builder)
 }
-
-//TODO radio buttons

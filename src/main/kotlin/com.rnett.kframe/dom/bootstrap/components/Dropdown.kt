@@ -31,6 +31,11 @@ class Dropdown(val buttonType: ContextType?) : ClassElement<HTMLDivElement, Drop
         element.classes += "dropdown-item"
     }
 
+    inline fun item(builder: Dropdown.() -> Element<*, *>) {
+        val element = builder()
+        element.classes += "dropdown-item"
+    }
+
 
     @KframeDSL
     fun divider() = menu.div("dropdown-divider")

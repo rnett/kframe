@@ -1,6 +1,6 @@
 package com.rnett.kframe.dom.input
 
-import com.rnett.kframe.dom.bootstrap.components.withLabel
+import com.rnett.kframe.dom.bootstrap.components.label
 import com.rnett.kframe.dom.div
 import com.rnett.kframe.structure.Builder
 import com.rnett.kframe.structure.DisplayElement
@@ -150,12 +150,10 @@ fun DisplayHost.checkbox(
 ): PropertyCheckbox {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
     val result: PropertyCheckbox
-    div("custom-control custom-plainCheckbox") {
-        result = plainCheckbox(property, klass, id) {
-            classes += "custom-control-input"
-        }
-        result.withLabel(label) {
-            classes += "custom-control-label"
+    div("checkbox") {
+        this.label(null) {
+            result = plainCheckbox(property, klass, id)
+            +label
         }
     }
     return result
@@ -170,12 +168,10 @@ fun DisplayHost.checkboxDelegate(
 ): CheckboxDelegate {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
     val result: CheckboxDelegate
-    div("custom-control custom-plainCheckbox") {
-        result = plainCheckboxDelegate(initialValue, klass, id) {
-            classes += "custom-control-input"
-        }
-        result.checkboxElement.withLabel(label) {
-            classes += "custom-control-label"
+    div("checkbox") {
+        this.label(null) {
+            result = plainCheckboxDelegate(initialValue, klass, id)
+            +label
         }
     }
     return result
@@ -190,12 +186,10 @@ fun DisplayHost.switch(
 ): PropertyCheckbox {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
     val result: PropertyCheckbox
-    div("custom-control custom-switch") {
-        result = plainCheckbox(property, klass, id) {
-            classes += "custom-control-input"
-        }
-        result.withLabel(label) {
-            classes += "custom-control-label"
+    div("switch") {
+        this.label(null) {
+            result = plainCheckbox(property, klass, id)
+            +label
         }
     }
     return result
@@ -210,12 +204,10 @@ fun DisplayHost.switchDelegate(
 ): CheckboxDelegate {
     contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
     val result: CheckboxDelegate
-    div("custom-control custom-switch") {
-        result = plainCheckboxDelegate(initialValue, klass, id) {
-            classes += "custom-control-input"
-        }
-        result.checkboxElement.withLabel(label) {
-            classes += "custom-control-label"
+    div("switch") {
+        this.label(null) {
+            result = plainCheckboxDelegate(initialValue, klass, id)
+            +label
         }
     }
     return result

@@ -8,20 +8,26 @@ import org.w3c.dom.HTMLLabelElement
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class Label(target: String) : DisplayElement<HTMLLabelElement, Label>("label") {
+class Label(target: String?) : DisplayElement<HTMLLabelElement, Label>("label") {
     var target by attributes.boxedValue<String>("for")
 
     init {
-        this.target = target
-        Document[`$`.id(target)].forEach {
-            //aria.labelledby = this.idOrRandom //TODO this will use random even if id is set in creation method
+        if (target != null) {
+            this.target = target
+            Document[`$`.id(target)].forEach {
+                //aria.labelledby = this.idOrRandom //TODO this will use random even if id is set in creation method
+            }
         }
     }
+
+    var static by classes.presentDelegate("bmd-label-placeholder")
+    var placeholoder by classes.presentDelegate("bmd-label-placeholder")
+    var floating by classes.presentDelegate("bmd-label-floating")
 }
 
 @KframeDSL
 inline fun DisplayHost.label(
-    target: String,
+    target: String?,
     klass: String = "", id: String = "",
     builder: Builder<Label> = {}
 ): Label {
@@ -75,3 +81,18 @@ inline fun Element<*, *>.withLabel(builder: Builder<Label> = {}) =
 @KframeDSL
 inline fun Element<*, *>.withLabel(text: String, builder: Builder<Label> = {}) =
     (parent!! as DisplayHost).label(this, text = text, builder = builder)
+
+@KframeDSL
+inline fun Element<*, *>.withFloatingLabel(builder: Builder<Label> = {}) =
+    (parent!! as DisplayHost).label(this) {
+        floating = true
+        builder()
+    }
+
+
+@KframeDSL
+inline fun Element<*, *>.withFloatingLabel(text: String, builder: Builder<Label> = {}) =
+    (parent!! as DisplayHost).label(this, text = text) {
+        floating = true
+        builder()
+    }

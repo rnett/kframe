@@ -29,6 +29,14 @@ abstract class BaseButton<B : BaseButton<B>>(val type: ContextType?, val outline
     var active by attributes.flagValue()
     var disabled by attributes.flagValue()
 
+    var raised by classes.presentDelegate("btn-raised")
+
+    var floating by classes.presentDelegate("bmd-btn-fab")
+    var smallFloating by classes.presentDelegate("bmd-btn-fab-sm")
+
+    var iconButton by classes.presentDelegate("bmd-btn-icon")
+    var smallIcon by classes.presentDelegate("bmd-btn-icon-sm")
+
 }
 
 class Button(type: ContextType?, outline: Boolean = false) : BaseButton<Button>(type, outline)

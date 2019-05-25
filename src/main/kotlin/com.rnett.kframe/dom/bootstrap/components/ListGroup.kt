@@ -2,16 +2,20 @@ package com.rnett.kframe.dom.bootstrap.components
 
 import com.rnett.kframe.dom.bootstrap.ContextType
 import com.rnett.kframe.structure.*
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLLIElement
-import org.w3c.dom.HTMLOListElement
-import org.w3c.dom.HTMLUListElement
+import com.rnett.kframe.structure.Element
+import org.w3c.dom.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 abstract class ListGroupElement<U : HTMLElement, S : ListGroupElement<U, S>>(tag: String) : DisplayElement<U, S>(tag) {
     init {
         classes += "list-group"
+    }
+
+    var dense by classes.presentDelegate("bmd-list-group-sm")
+
+    fun Element<*, *>.asItem() {
+        this.classes += "list-group-item"
     }
 }
 
@@ -115,6 +119,55 @@ inline fun ListGroupElement<*, *>.item(
 
         if (context != null)
             classes += context.klass("list-group-item")
+
+        builder()
+    }
+}
+
+class TwoPartListGroupItem : DisplayElement<HTMLDivElement, TwoPartListGroupItem>("div") {
+    init {
+        classes += "bmd-list-group-col"
+    }
+}
+
+@KframeDSL
+inline fun DisplayHost.itemComponents(
+    klass: String = "", id: String = "",
+    builder: Builder<TwoPartListGroupItem> = {}
+): TwoPartListGroupItem {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +TwoPartListGroupItem()(klass, id, builder)
+}
+
+@KframeDSL
+inline fun TwoPartListGroupItem.heading(
+    text: String = "",
+    klass: String = "", id: String = "",
+    builder: BasicDisplayBuilder<HTMLHeadingElement> = {}
+): BasicDisplayElement<HTMLHeadingElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicDisplayElement<HTMLHeadingElement>("p")(klass, id) {
+        classes += "list-group-item-heading"
+
+        if (text.isNotBlank())
+            +text
+
+        builder()
+    }
+}
+
+@KframeDSL
+inline fun TwoPartListGroupItem.text(
+    text: String = "",
+    klass: String = "", id: String = "",
+    builder: BasicDisplayBuilder<HTMLHeadingElement> = {}
+): BasicDisplayElement<HTMLHeadingElement> {
+    contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+    return +BasicDisplayElement<HTMLHeadingElement>("p")(klass, id) {
+        classes += "list-group-item-text"
+
+        if (text.isNotBlank())
+            +text
 
         builder()
     }
