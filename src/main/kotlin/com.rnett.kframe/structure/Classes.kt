@@ -29,6 +29,8 @@ class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Ele
         element.underlying.className = ""
     }
 
+    override fun removeAll(elements: Collection<String>): Boolean = elements.all { remove(it) }
+
     override fun remove(element: String) =
         if (classes.remove(element)) {
             this.element.underlying.classList.remove(element)
