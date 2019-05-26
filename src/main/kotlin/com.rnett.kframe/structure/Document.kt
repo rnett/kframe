@@ -119,7 +119,7 @@ object Document {
         onPageChangeSubscribers.add(event)
     }
 
-    internal fun refreshPages() {
+    fun refreshPages() {
         pageMounts.forEach {
             it.update()
         }
