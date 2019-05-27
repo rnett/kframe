@@ -23,6 +23,8 @@ class Bootstrap(val element: Element<*, *>) {
         var wrapping by bootstrap.element.classes.optionalClassDelegate<Wrapping> { if (it == Wrapping.None) null else it.klass }
 
         var order by bootstrap.element.classes.optionalClassDelegate<Int> { "order-$it" }
+
+        operator fun invoke(body: Flex.() -> Unit) = body()
     }
 
     val flex = Flex(this)
@@ -48,6 +50,8 @@ class Bootstrap(val element: Element<*, *>) {
             set(bs) {
                 deactivated(*bs.toTypedArray())
             }
+
+        operator fun invoke(body: Border.() -> Unit) = body()
     }
 
     val border = Border(this)
@@ -78,6 +82,8 @@ class Bootstrap(val element: Element<*, *>) {
         fun clear() {
             bootstrap.element.classes.removeAll { it.startsWith("$property-") }
         }
+
+        operator fun invoke(body: SizeSetter.() -> Unit) = body()
     }
 
     class MarginSideSetter(property: String, bootstrap: Bootstrap) : SizeSetter(property, bootstrap) {
@@ -88,6 +94,8 @@ class Bootstrap(val element: Element<*, *>) {
 
             bootstrap.element.classes += "$start${spacing.value}"
         }
+
+        operator fun invoke(body: MarginSideSetter.() -> Unit) = body()
     }
 
     val margin = MarginSideSetter("m", this)
@@ -113,6 +121,8 @@ class Bootstrap(val element: Element<*, *>) {
 
         var reset by bootstrap.element.classes.presentDelegate("text-reset")
         var noDecoration by bootstrap.element.classes.presentDelegate("text-decoration-none")
+
+        operator fun invoke(body: Text.() -> Unit) = body()
     }
 
     val text = Text(this)
@@ -126,6 +136,8 @@ class Bootstrap(val element: Element<*, *>) {
             else -> null
         }
     }
+
+    operator fun invoke(body: Bootstrap.() -> Unit) = body()
 
 }
 
