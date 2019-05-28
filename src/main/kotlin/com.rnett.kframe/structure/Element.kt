@@ -30,6 +30,7 @@ interface Removable {
 //TODO better bndings using onAdd, like pages
 interface ElementHost<S : ElementHost<S>> {
     fun addChild(child: Element<*, *>)
+    fun removeChild(child: Element<*, *>)
     fun addText(text: String): TextElement
 
     operator fun <T : AnyElement> T.unaryPlus(): T {
@@ -144,6 +145,11 @@ open class W3ElementWrapper<S : W3ElementWrapper<S, U>, U : org.w3c.dom.Element>
             addSubscriber!!(child)
     }
 
+    override fun removeChild(child: Element<*, *>) {
+        underlying.removeChild(child.underlying)
+        _children.remove(child)
+    }
+
     override fun addText(text: String): TextElement {
         val t = kotlin.browser.document.createTextNode(text)
         underlying.appendChild(t)
@@ -232,6 +238,11 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
 
     fun onAdded(parent: ElementHost<*>) {
         this._parent = parent
+    }
+
+    override fun removeChild(child: Element<*, *>) {
+        underlying.removeChild(child.underlying)
+        _children.remove(child)
     }
 
     override fun remove() {
