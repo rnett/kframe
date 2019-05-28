@@ -16,14 +16,22 @@ fun Table.makeSortable(columns: Set<Int>, transforms: Map<Int, Comparator<String
         Triple(it.index, it.value, transforms[it.index] ?: Comparator { a, b -> a.compareTo(b) })
     }
 
+    headers.forEach { (_, it, _) ->
+
+        it.underlying.innerHTML = it.underlying.innerHTML
+            .removeSuffix("  &#x25B2;").removeSuffix("  &#x25BC;")
+            .removeSuffix("  ▲").removeSuffix("  ▼")
+
+        it.attributes.remove("data-sort")
+    }
+
     fun TableDataElement.doSort(index: Int, transform: Comparator<String>) {
         if (attributes["data-sort"] == null) {
-            if (attributes["data-default-sort"] == null)
+            if (attributes["data-default-desc"] == null)
                 attributes["data-sort"] = "asc"
             else
-                attributes["data-sort"] = attributes["data-default-sort"]
+                attributes["data-sort"] = Attributes.Value.Box("desc")
         } else {
-
             val sort = attributes["data-sort"]!!.raw
             if (sort == "desc")
                 attributes["data-sort"] = Attributes.Value.Box("asc")
@@ -35,9 +43,12 @@ fun Table.makeSortable(columns: Set<Int>, transforms: Map<Int, Comparator<String
 
         sortBy(index, sort == "desc", transform)
 
-        underlying.innerHTML = underlying.innerHTML
-            .removeSuffix("  &#x25B2;").removeSuffix("  &#x25BC;")
-            .removeSuffix("  ▲").removeSuffix("  ▼")
+        headers.forEach { (_, it, _) ->
+
+            it.underlying.innerHTML = it.underlying.innerHTML
+                .removeSuffix("  &#x25B2;").removeSuffix("  &#x25BC;")
+                .removeSuffix("  ▲").removeSuffix("  ▼")
+        }
 
         if (sort == "asc") {
             underlying.innerHTML += "  &#x25B2;"
