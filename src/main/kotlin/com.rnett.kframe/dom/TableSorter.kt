@@ -7,20 +7,26 @@ inline fun <T : Comparable<T>> TransformComparator(crossinline transform: (Strin
     transform(a).compareTo(transform(b))
 }
 
-fun Table.makeSortable(columns: Set<Int>, transforms: Map<Int, Comparator<String>>) {
+fun Table.makeSortable(
+    transforms: Map<Int, Comparator<String>>,
+    columns: Set<Int> = transforms.keys,
+    startColumn: Int? = null,
+    ascMarker: String = "  ▲",
+    descMarker: String = "  ▼"
+) {
     val head = children.firstOrNull { it is TableHead }?.children?.firstOrNull { it is TableRow } ?: return
 
-    val headers = head.children.filterIsInstance<TableDataElement>().filter { it.isTh }.withIndex().filter {
+    val headers =
+        head.children.asSequence().filterIsInstance<TableDataElement>().filter { it.isTh }.withIndex().filter {
         it.index in columns
     }.map {
         Triple(it.index, it.value, transforms[it.index] ?: Comparator { a, b -> a.compareTo(b) })
-    }
+        }.toList()
 
     headers.forEach { (_, it, _) ->
 
         it.underlying.innerHTML = it.underlying.innerHTML
-            .removeSuffix("  &#x25B2;").removeSuffix("  &#x25BC;")
-            .removeSuffix("  ▲").removeSuffix("  ▼")
+            .removeSuffix(ascMarker).removeSuffix(descMarker)
 
         it.attributes.remove("data-sort")
     }
@@ -46,14 +52,13 @@ fun Table.makeSortable(columns: Set<Int>, transforms: Map<Int, Comparator<String
         headers.forEach { (_, it, _) ->
 
             it.underlying.innerHTML = it.underlying.innerHTML
-                .removeSuffix("  &#x25B2;").removeSuffix("  &#x25BC;")
-                .removeSuffix("  ▲").removeSuffix("  ▼")
+                .removeSuffix(ascMarker).removeSuffix(descMarker)
         }
 
         if (sort == "asc") {
-            underlying.innerHTML += "  &#x25B2;"
+            underlying.innerHTML += ascMarker
         } else if (sort == "desc") {
-            underlying.innerHTML += "  &#x25BC;"
+            underlying.innerHTML += descMarker
         }
     }
 
@@ -66,7 +71,7 @@ fun Table.makeSortable(columns: Set<Int>, transforms: Map<Int, Comparator<String
 
     headers.forEach { (index, header, transform) ->
         header.apply {
-            if ("data-sort-start" in attributes) {
+            if (index == startColumn) {
                 doSort(index, transform)
             }
         }
