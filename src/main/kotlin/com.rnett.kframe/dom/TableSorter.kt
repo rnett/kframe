@@ -35,7 +35,9 @@ fun Table.makeSortable(columns: Set<Int>, transforms: Map<Int, Comparator<String
 
         sortBy(index, sort == "desc", transform)
 
-        underlying.innerHTML = underlying.innerHTML.removeSuffix("  &#x25B2;").removeSuffix("  &#x25BC;")
+        underlying.innerHTML = underlying.innerHTML
+            .removeSuffix("  &#x25B2;").removeSuffix("  &#x25BC;")
+            .removeSuffix("  ▲").removeSuffix("  ▼")
 
         if (sort == "asc") {
             underlying.innerHTML += "  &#x25B2;"
@@ -48,6 +50,7 @@ fun Table.makeSortable(columns: Set<Int>, transforms: Map<Int, Comparator<String
         header.on.click {
             header.apply { doSort(index, transform) }
         }
+        header.style.cursor = "pointer"
     }
 
     headers.forEach { (index, header, transform) ->

@@ -96,7 +96,6 @@ class Style(private val rules: MutableMap<String, Value>, val element: Element<*
     fun <T> boxedValue(key: String, prefix: String) = BoxValueDelegate<T>(key, prefix)
     fun <T> boxedValue(key: String) = BoxValueDelegate<T>(key)
     fun <T> boxedValue() = BoxValueDelegate<T>(null)
-
     val stringValue get() = boxedValue<String>()
 
     fun toRaw(): String = rules.entries.joinToString(";") { "${it.key}: ${it.value.raw}" }
@@ -468,6 +467,7 @@ class Style(private val rules: MutableMap<String, Value>, val element: Element<*
 
 
     var whiteSpace by stringValue
+    var cursor by stringValue
 
 }
 
