@@ -20,7 +20,7 @@ class Label(target: String?) : DisplayElement<HTMLLabelElement, Label>("label") 
         }
     }
 
-    var static by classes.presentDelegate("bmd-label-placeholder")
+    var static by classes.presentDelegate("bmd-label-static")
     var placeholoder by classes.presentDelegate("bmd-label-placeholder")
     var floating by classes.presentDelegate("bmd-label-floating")
 }
