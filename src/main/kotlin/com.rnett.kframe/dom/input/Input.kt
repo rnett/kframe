@@ -3,7 +3,6 @@ package com.rnett.kframe.dom.input
 import com.rnett.kframe.structure.*
 import com.rnett.kframe.structure.data.EqualityCheck
 import org.w3c.dom.HTMLInputElement
-import kotlin.browser.document
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.properties.ReadWriteProperty
@@ -72,15 +71,9 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
         }
     }
 
-    fun displayChanges(newValue: T, noChangeEvent: Boolean = false) {
+    fun displayChanges(newValue: T) {
         _value = newValue
         rawValue = displayValue(_value)
-
-        if (!noChangeEvent) {
-            val event = document.createEvent("htmlevents")
-            event.initEvent("change", true, true)
-            underlying.dispatchEvent(event)
-        }
     }
 
     init {
@@ -104,7 +97,7 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
         underlying.setCustomValidity("")
 
         setValue(newValue)
-        displayChanges(newValue, noChangeEvent)
+        displayChanges(newValue)
     }
 
     init {
