@@ -193,7 +193,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
         var id: String
         var tries = 0
         do {
-            id = String(List(16 * (tries / 10)) { idRandom.nextInt(65, 91) }.map { it.toChar() }.toCharArray())
+            id = String(List(16 * ((tries / 10) + 1)) { idRandom.nextInt(65, 91) }.map { it.toChar() }.toCharArray())
             tries++
         } while (id in usedIds)
         this.id = "random-$id"
