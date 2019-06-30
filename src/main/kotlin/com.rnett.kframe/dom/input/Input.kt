@@ -1,9 +1,6 @@
 package com.rnett.kframe.dom.input
 
-import com.rnett.kframe.structure.Builder
-import com.rnett.kframe.structure.DisplayElement
-import com.rnett.kframe.structure.DisplayHost
-import com.rnett.kframe.structure.KframeDSL
+import com.rnett.kframe.structure.*
 import com.rnett.kframe.structure.data.EqualityCheck
 import org.w3c.dom.HTMLInputElement
 import kotlin.browser.document
@@ -75,12 +72,15 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
         }
     }
 
-    fun displayChanges(newValue: T) {
+    fun displayChanges(newValue: T, noChangeEvent: Boolean = false) {
         _value = newValue
         rawValue = displayValue(_value)
-        val event = document.createEvent("htmlevents")
-        event.initEvent("change", true, true)
-        underlying.dispatchEvent(event)
+
+        if (!noChangeEvent) {
+            val event = document.createEvent("htmlevents")
+            event.initEvent("change", true, true)
+            underlying.dispatchEvent(event)
+        }
     }
 
     init {
@@ -88,7 +88,7 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
         displayChanges(_value)
     }
 
-    fun saveChanges() {
+    fun saveChanges(noChangeEvent: Boolean = false) {
 
         if (!doSet)
             return
@@ -104,15 +104,30 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
         underlying.setCustomValidity("")
 
         setValue(newValue)
-        displayChanges(newValue)
+        displayChanges(newValue, noChangeEvent)
     }
 
     init {
         if (doSet) {
             on.change {
-                saveChanges()
+                saveChanges(true)
             }
         }
+
+        on.focusin {
+            val p = parent
+            if (p != null && p is Element<*, *> && "form-group" in p.classes) {
+                p.classes += "is-focused"
+            }
+        }
+
+        on.focusout {
+            val p = parent
+            if (p != null && p is Element<*, *> && "form-group" in p.classes) {
+                p.classes -= "is-focused"
+            }
+        }
+
         update()
     }
 }

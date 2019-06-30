@@ -108,6 +108,10 @@ class Classes(val classes: MutableSet<String> = mutableSetOf(), val element: Ele
         add(klass)
     }
 
+    operator fun minusAssign(klass: String) {
+        remove(klass)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class.js != other::class.js) return false
