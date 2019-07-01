@@ -47,7 +47,11 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
     private var _value: T
     val value get() = _value
 
-    var rawValue by attributes.boxedValue<String>("value")
+    var rawValue
+        get() = underlying.value
+        set(v) {
+            underlying.value = v
+        }
 
     var type by attributes.boxedValue<String>()
 
@@ -87,7 +91,7 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
             return
 
         val newValue = try {
-            parseValue(rawValue!!)
+            parseValue(rawValue)
         } catch (e: Exception) {
             underlying.setCustomValidity(e.toValidationError())
             underlying.reportValidity()
@@ -96,7 +100,6 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
 
         underlying.setCustomValidity("")
 
-        println("Setting: $newValue for raw $rawValue")
         setValue(newValue)
         displayChanges(newValue)
     }
@@ -104,7 +107,6 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
     init {
         if (doSet) {
             on.change {
-                println("Change caught")
                 saveChanges()
             }
         }
