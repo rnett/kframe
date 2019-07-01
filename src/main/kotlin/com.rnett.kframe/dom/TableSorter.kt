@@ -101,6 +101,6 @@ fun Table.sortBy(column: Int, desc: Boolean, comp: Comparator<String>) {
         Comparator { a, b -> comp.compare(a.second, b.second) }
 
     rows.sortedWith(rowComp).forEach {
-        //body.addChild(it.first)
+        body.addChild(it.first)
     }
 }
