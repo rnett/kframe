@@ -33,7 +33,7 @@ fun Table.makeSortable(
     }
 
     fun TableDataElement.doSort(index: Int, transform: Comparator<String>) {
-        println("Sorting")
+
         if (attributes["data-sort"] == null) {
             if (attributes["data-default-desc"] == null)
                 attributes["data-sort"] = "asc"
@@ -90,7 +90,7 @@ fun Table.sortBy(column: Int, desc: Boolean, comp: Comparator<String>) {
     val body = children.firstOrNull { it is TableBody } ?: return
 
     val rows = body.children.filterIsInstance<TableRow>().map { it to it.children[column].underlying.innerHTML.trim() }
-    kotlin.js.console.log(rows.map { it.second })
+
     rows.forEach {
         body.removeChild(it.first)
     }
