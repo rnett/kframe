@@ -91,7 +91,7 @@ fun Table.sortBy(column: Int, desc: Boolean, comp: Comparator<String>) {
     val body = children.firstOrNull { it is TableBody } ?: return
 
     val rows = body.children.filterIsInstance<TableRow>().map { it to it.children[column].underlying.innerHTML.trim() }
-
+    println(rows)
     rows.forEach {
         body.removeChild(it.first)
     }
