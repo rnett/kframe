@@ -96,7 +96,7 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
 
         underlying.setCustomValidity("")
 
-        println("Setting: $newValue")
+        println("Setting: $newValue for raw $rawValue")
         setValue(newValue)
         displayChanges(newValue)
     }
