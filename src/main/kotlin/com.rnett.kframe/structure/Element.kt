@@ -246,6 +246,7 @@ abstract class Element<U : HTMLElement, S : Element<U, S>>(tag: String) : Elemen
     }
 
     override fun remove() {
+        parent?.removeChild(this)
         underlying.remove()
     }
 
