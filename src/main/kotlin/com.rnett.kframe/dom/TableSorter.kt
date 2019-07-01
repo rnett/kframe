@@ -66,7 +66,6 @@ fun Table.makeSortable(
 
 
     if (attributes["sortable"]?.raw != "true") {
-        println("Adding events")
         headers.forEach { (index, header, transform) ->
             header.on.click {
                 header.apply { doSort(index, transform) }

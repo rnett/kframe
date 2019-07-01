@@ -78,6 +78,14 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
     fun displayChanges(newValue: T) {
         _value = newValue
         rawValue = displayValue(_value)
+
+        val p = parent
+        if (p != null && p is Element<*, *> && "form-group" in p.classes) {
+            if (rawValue != "")
+                p.classes += "is-filled"
+            else
+                p.classes -= "is-filled"
+        }
     }
 
     init {
