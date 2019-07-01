@@ -81,7 +81,7 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
         displayChanges(_value)
     }
 
-    fun saveChanges(noChangeEvent: Boolean = false) {
+    fun saveChanges() {
 
         if (!doSet)
             return
@@ -96,6 +96,7 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
 
         underlying.setCustomValidity("")
 
+        println("Setting: $newValue")
         setValue(newValue)
         displayChanges(newValue)
     }
@@ -103,7 +104,7 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
     init {
         if (doSet) {
             on.change {
-                saveChanges(true)
+                saveChanges()
             }
         }
 
