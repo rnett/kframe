@@ -104,6 +104,7 @@ open class BaseInputElement<T, R, S : BaseInputElement<T, R, S>>(
     init {
         if (doSet) {
             on.change {
+                println("Change caught")
                 saveChanges()
             }
         }
