@@ -90,7 +90,7 @@ fun Table.sortBy(column: Int, desc: Boolean, comp: Comparator<String>) {
     val body = children.firstOrNull { it is TableBody } ?: return
 
     val rows = body.children.filterIsInstance<TableRow>().map { it to it.children[column].underlying.innerHTML.trim() }
-    println(rows)
+    kotlin.js.console.log(rows.map { it.second })
     rows.forEach {
         body.removeChild(it.first)
     }
@@ -101,6 +101,6 @@ fun Table.sortBy(column: Int, desc: Boolean, comp: Comparator<String>) {
         Comparator { a, b -> comp.compare(a.second, b.second) }
 
     rows.sortedWith(rowComp).forEach {
-        body.addChild(it.first)
+        //body.addChild(it.first)
     }
 }
