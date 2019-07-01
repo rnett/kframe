@@ -33,6 +33,7 @@ fun Table.makeSortable(
     }
 
     fun TableDataElement.doSort(index: Int, transform: Comparator<String>) {
+        println("Sorting")
         if (attributes["data-sort"] == null) {
             if (attributes["data-default-desc"] == null)
                 attributes["data-sort"] = "asc"
@@ -64,7 +65,8 @@ fun Table.makeSortable(
     }
 
 
-    if (data["sortable"] != "true") {
+    if (attributes["sortable"]?.raw != "true") {
+        println("Adding events")
         headers.forEach { (index, header, transform) ->
             header.on.click {
                 header.apply { doSort(index, transform) }
@@ -81,7 +83,7 @@ fun Table.makeSortable(
         }
     }
 
-    data["sortable"] = "true"
+    attributes["sortable"] = "true"
 
 }
 
