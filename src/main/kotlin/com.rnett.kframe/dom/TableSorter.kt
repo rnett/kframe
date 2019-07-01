@@ -14,6 +14,7 @@ fun Table.makeSortable(
     ascMarker: String = "  ▲",
     descMarker: String = "  ▼"
 ) {
+
     val head = children.firstOrNull { it is TableHead }?.children?.firstOrNull { it is TableRow } ?: return
 
     val headers =
@@ -62,11 +63,14 @@ fun Table.makeSortable(
         }
     }
 
-    headers.forEach { (index, header, transform) ->
-        header.on.click {
-            header.apply { doSort(index, transform) }
+
+    if (data["sortable"] != "true") {
+        headers.forEach { (index, header, transform) ->
+            header.on.click {
+                header.apply { doSort(index, transform) }
+            }
+            header.style.cursor = "pointer"
         }
-        header.style.cursor = "pointer"
     }
 
     headers.forEach { (index, header, transform) ->
@@ -76,6 +80,8 @@ fun Table.makeSortable(
             }
         }
     }
+
+    data["sortable"] = "true"
 
 }
 
