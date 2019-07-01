@@ -34,7 +34,11 @@ open class BaseTextArea<S : BaseTextArea<S>>(
     private var _value: String
     val value get() = _value
 
-    var rawValue by attributes.boxedValue<String>("value")
+    var rawValue
+        get() = underlying.value
+        set(v) {
+            underlying.value = v
+        }
 
     var rows by attributes.boxedValue<Int>()
     var cols by attributes.boxedValue<Int>()
@@ -73,7 +77,7 @@ open class BaseTextArea<S : BaseTextArea<S>>(
             return
 
         val newValue = try {
-            rawValue!!
+            rawValue
         } catch (e: Exception) {
             underlying.setCustomValidity(e.toValidationError())
             underlying.reportValidity()
