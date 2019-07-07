@@ -49,18 +49,19 @@ fun Table.makeSortable(
 
         val sort = attributes["data-sort"]!!.raw
 
-        sortBy(index, sort == "desc", transform)
+        if (sortBy(index, sort == "desc", transform)) {
 
-        headers.forEach { (_, it, _) ->
+            headers.forEach { (_, it, _) ->
 
-            it.underlying.innerHTML = it.underlying.innerHTML
-                .removeSuffix(ascMarker).removeSuffix(descMarker)
-        }
+                it.underlying.innerHTML = it.underlying.innerHTML
+                    .removeSuffix(ascMarker).removeSuffix(descMarker)
+            }
 
-        if (sort == "asc") {
-            underlying.innerHTML += ascMarker
-        } else if (sort == "desc") {
-            underlying.innerHTML += descMarker
+            if (sort == "asc") {
+                underlying.innerHTML += ascMarker
+            } else if (sort == "desc") {
+                underlying.innerHTML += descMarker
+            }
         }
     }
 
@@ -86,8 +87,11 @@ fun Table.makeSortable(
 
 }
 
-fun Table.sortBy(column: Int, desc: Boolean, comp: Comparator<String>) {
-    val body = children.firstOrNull { it is TableBody } ?: return
+/**
+ * @return Whether the table was sucessfully sorted
+ */
+fun Table.sortBy(column: Int, desc: Boolean, comp: Comparator<String>): Boolean {
+    val body = children.firstOrNull { it is TableBody } ?: return false
 
     val rows = body.children.filterIsInstance<TableRow>().map { it to it.children[column].underlying.innerHTML.trim() }
 
@@ -100,7 +104,15 @@ fun Table.sortBy(column: Int, desc: Boolean, comp: Comparator<String>) {
     else
         Comparator { a, b -> comp.compare(a.second, b.second) }
 
-    rows.sortedWith(rowComp).forEach {
+    val (data, didSort) = try {
+        rows.sortedWith(rowComp) to true
+    } catch (e: Exception) {
+        rows to false
+    }
+
+    data.forEach {
         body.addChild(it.first)
     }
+
+    return didSort
 }
