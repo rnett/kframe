@@ -496,10 +496,12 @@ enum class SizeUnit {
 
 data class Size(val length: Number, val units: SizeUnit) : Style.Value() {
     override val raw: String
-        get() = length.toString() + units.toString()
+        get() = if (length == Double.MIN_VALUE && units == SizeUnit.raw) "auto" else length.toString() + units.toString()
 
     companion object {
         fun Char.isLetterOrPercent() = this == '%' || (this.toString().match("[a-zA-z]")?.isNotEmpty() ?: false)
+
+        val auto = Size(Double.MIN_VALUE, SizeUnit.raw)
     }
 
     constructor(sizeAndUnits: String) : this(
