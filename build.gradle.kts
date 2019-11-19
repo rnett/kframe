@@ -1,7 +1,9 @@
 plugins {
-    id("kotlin2js") version "1.3.31"
+    id("org.jetbrains.kotlin.js") version "1.3.60"
     //id("org.jetbrains.kotlin.frontend") version "0.0.45"
+    maven
     `maven-publish`
+    id("kotlinx-serialization") version "1.3.60"
 }
 
 group = "com.rnett.kframe"
@@ -18,37 +20,36 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-js"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.13.0")
 }
 
-kotlin {
-    target.compilations.all {
+
+kotlin.target.browser {}
+
+kotlin.target {
+    useCommonJs()
+
+    configure(compilations) {
         kotlinOptions {
-            sourceMap = true
-            moduleKind = "commonjs"
             metaInfo = true
-            //outputFile = "$projectDir/web/"
             noStdlib = true
+            sourceMap = true
             sourceMapEmbedSources = "always"
             freeCompilerArgs += "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
         }
     }
 }
 
-//kotlinFrontend {
-//    sourceMaps = true
-//    downloadNodeJsVersion = "latest"
-//}
 
 val sourcesJar = tasks.create<Jar>("sourcesJar") {
     classifier = "sources"
-    from(sourceSets["main"].allSource)
+    from(kotlin.sourceSets["main"].kotlin.srcDirs)
 }
 
 publishing {
     publications{
         create("default", MavenPublication::class) {
-            from(components["java"])
+            from(components["kotlin"])
             group = "com.rnett.kframe"
             artifactId = "kframe"
             version = "1.0.0"
